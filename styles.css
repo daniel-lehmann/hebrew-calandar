@@ -318,6 +318,122 @@ button:active {
   font-size: 0.8rem;
 }
 
+/* ======== Parasha label ======== */
+
+.parasha {
+  margin-top: 0.15rem;
+  font-size: 0.6rem;
+  color: #a78bfa;
+  text-align: center;
+  line-height: 1.15;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.parasha:hover {
+  color: #c4b5fd;
+  text-decoration: underline;
+}
+
+/* ======== Parasha popup ======== */
+
+.parasha-popup-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: min(18vh, 130px);
+}
+
+.parasha-popup-box {
+  position: relative;
+  width: min(480px, 92vw);
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 0.75rem;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65);
+  padding: 1.5rem;
+  animation: searchPopIn 0.12s ease-out;
+}
+
+.parasha-popup-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.75rem;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.2rem 0.5rem;
+  line-height: 1;
+  border-radius: 0.25rem;
+}
+
+.parasha-popup-close:hover {
+  color: #f1f5f9;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: none;
+  filter: none;
+}
+
+.parasha-popup-title {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.25rem;
+  color: #c4b5fd;
+  border-bottom: 1px solid #334155;
+  padding-bottom: 0.5rem;
+}
+
+.parasha-popup-row {
+  margin-bottom: 0.4rem;
+  font-size: 0.9rem;
+  color: #e5e7eb;
+  line-height: 1.4;
+}
+
+.parasha-popup-label {
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.parasha-popup-link {
+  display: inline-block;
+  margin-top: 0.75rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: filter 0.1s ease, box-shadow 0.1s ease;
+}
+
+.parasha-popup-link:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+}
+
+.parasha-popup-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.parasha-popup-link-chabad {
+  background: linear-gradient(135deg, #c9302c, #ac2925);
+}
+
+.parasha-popup-link-chabad:hover {
+  box-shadow: 0 4px 15px rgba(201, 48, 44, 0.4);
+}
+
 /* ======== Search popup ======== */
 
 .search-icon-btn {
@@ -591,6 +707,23 @@ button:active {
     padding: 0.1rem;
   }
 
+  .parasha {
+    font-size: 0.48rem;
+  }
+
+  .parasha-popup-box {
+    width: 96vw;
+    padding: 1rem;
+  }
+
+  .parasha-popup-title {
+    font-size: 1.05rem;
+  }
+
+  .parasha-popup-row {
+    font-size: 0.82rem;
+  }
+
   /* Stats: stack buttons vertically */
   .stats-controls {
     flex-direction: column;
@@ -692,6 +825,10 @@ button:active {
 
   .holiday {
     font-size: 0.48rem;
+  }
+
+  .parasha {
+    font-size: 0.42rem;
   }
 
   .calendar-header-cell {

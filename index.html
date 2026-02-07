@@ -54,8 +54,6 @@
           <!-- Top-level buttons -->
           <div class="stats-controls" id="stats-buttons-row">
             <button id="btn-stats-back" class="stats-back-btn" style="display:none;">&larr; Back</button>
-            <button id="btn-earliest-pesach" class="stat-btn">Earliest holiday dates</button>
-            <button id="btn-latest-holidays" class="stat-btn">Latest holiday dates</button>
             <button id="btn-tishrei-list" class="stat-btn">List Hebrew date by year</button>
             <button id="btn-tishrei-hist" class="stat-btn">Day-of-week histogram</button>
             <button id="btn-holiday-graph-toggle" class="stat-btn">Holiday line graph</button>
@@ -83,13 +81,12 @@
               <input id="tishrei-years-input" type="number" min="1" max="2000" value="19" />
               <label for="hebrew-date-kind">Date type</label>
               <select id="hebrew-date-kind">
-                <option value="tishrei1">Tishrei 1</option>
                 <option value="holiday">Holiday</option>
                 <option value="custom">Custom Hebrew date</option>
               </select>
               <select id="hebrew-holiday-select"></select>
-              <select id="hebrew-month-select"></select>
-              <input id="hebrew-day-input" type="number" min="1" max="30" placeholder="Day" />
+              <select id="hebrew-month-select" style="display:none;"></select>
+              <input id="hebrew-day-input" type="number" min="1" max="30" placeholder="Day" style="display:none;" />
               <button id="btn-tishrei-list-run">Run</button>
             </div>
           </div>
@@ -141,6 +138,8 @@
     <script src="js/stats.js"></script>
     <script src="js/view.js"></script>
     <script src="js/search.js"></script>
+    <script src="data/parashot-data.js"></script>
+    <script src="js/parashot.js"></script>
     <script src="js/main.js"></script>
   </body>
 </html>

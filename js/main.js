@@ -63,8 +63,6 @@
     let isHebrewView = false;
 
     /* --- Stat buttons --- */
-    const btnEarliestPesach = document.getElementById("btn-earliest-pesach");
-    const btnLatestHolidays = document.getElementById("btn-latest-holidays");
     const btnTishreiList = document.getElementById("btn-tishrei-list");
     const btnTishreiHist = document.getElementById("btn-tishrei-hist");
     const btnHolidayGraphToggle = document.getElementById("btn-holiday-graph-toggle");
@@ -491,23 +489,23 @@
       btnStatsBack.addEventListener("click", deactivateStat);
     }
 
-    // Earliest / Latest — no panel needed, just output text
-    btnEarliestPesach.addEventListener("click", () => {
-      activateStat(btnEarliestPesach);
-      togglePanel(""); // close all panels
-      statsOutput.textContent = global.Stats.summarizeEarliestPesach();
-    });
-    btnLatestHolidays.addEventListener("click", () => {
-      activateStat(btnLatestHolidays);
-      togglePanel("");
-      statsOutput.textContent = global.Stats.summarizeLatestHolidays();
-    });
-
     // "List Hebrew date by year" — toggle its panel
     btnTishreiList.addEventListener("click", () => {
       activateStat(btnTishreiList);
       togglePanel("panel-tishrei-list");
     });
+
+    // Toggle sub-fields based on date type
+    if (hebrewDateKind) {
+      function syncListDateFields() {
+        var kind = hebrewDateKind.value;
+        if (hebrewHolidaySelect) hebrewHolidaySelect.style.display = kind === "holiday" ? "" : "none";
+        if (hebrewMonthSelect) hebrewMonthSelect.style.display = kind === "custom" ? "" : "none";
+        if (hebrewDayInput) hebrewDayInput.style.display = kind === "custom" ? "" : "none";
+      }
+      hebrewDateKind.addEventListener("change", syncListDateFields);
+      syncListDateFields(); // set initial state
+    }
 
     // Run button inside the panel
     if (btnTishreiListRun) {
@@ -525,11 +523,9 @@
         if (!Number.isFinite(years) || years <= 0) years = 19;
         if (years > 2000) years = 2000;
 
-        const kind = hebrewDateKind ? hebrewDateKind.value : "tishrei1";
+        const kind = hebrewDateKind ? hebrewDateKind.value : "holiday";
 
-        let monthName = "Tishrey";
-        let day = 1;
-        let label = "1 Tishrey";
+        let monthName, day, label;
 
         if (kind === "holiday" && hebrewHolidaySelect) {
           const holidayName = hebrewHolidaySelect.value;
@@ -542,9 +538,9 @@
           monthName = holiday.month;
           day = holiday.startDay;
           label = holiday.name;
-        } else if (kind === "custom" && hebrewMonthSelect && hebrewDayInput) {
-          monthName = hebrewMonthSelect.value;
-          day = Number(hebrewDayInput.value);
+        } else {
+          monthName = hebrewMonthSelect ? hebrewMonthSelect.value : "Tishrey";
+          day = hebrewDayInput ? Number(hebrewDayInput.value) : 1;
           if (!monthName || !day) {
             statsOutput.textContent = "Please choose a Hebrew month and day.";
             return;
@@ -894,7 +890,15 @@
     }
 
     /* ======================== boot ================================ */
-    renderCurrent();
+
+    // Load parasha data, then render (so parasha names appear on first paint)
+    if (global.Parashot && global.Parashot.loadParashaData) {
+      global.Parashot.loadParashaData(function () {
+        renderCurrent();
+      });
+    } else {
+      renderCurrent();
+    }
   }
 
   // Call setupUI directly — no async wrapping so errors surface immediately.

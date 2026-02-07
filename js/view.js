@@ -148,6 +148,28 @@
         cell.appendChild(holidayEl);
       }
 
+      // Parasha on Saturdays
+      var weekday = new Date(gregorianYear, monthIndex, day).getDay();
+      if (weekday === 6 && global.Parashot) {
+        var parasha = global.Parashot.getParashaForDate(gregorianYear, monthIndex, day);
+        if (parasha && parasha.name) {
+          var parashaEl = document.createElement("div");
+          parashaEl.className = "parasha";
+          parashaEl.textContent = parasha.name;
+          parashaEl.title = "Click for details";
+          if (!parasha.holiday) {
+            parashaEl.style.cursor = "pointer";
+            (function (pName) {
+              parashaEl.addEventListener("click", function (e) {
+                e.stopPropagation();
+                global.Parashot.showParashaPopup(pName);
+              });
+            })(parasha.name);
+          }
+          cell.appendChild(parashaEl);
+        }
+      }
+
       container.appendChild(cell);
     }
   }
@@ -328,6 +350,27 @@
         holidayEl.appendChild(nameSpan);
         holidayEl.appendChild(nextBtn);
         cell.appendChild(holidayEl);
+      }
+
+      // Parasha on Saturdays (Hebrew view)
+      if (greg.weekday === 6 && global.Parashot) {
+        var parasha = global.Parashot.getParashaForHebrewDate(hebrewYear, hebrewMonthName, day);
+        if (parasha && parasha.name) {
+          var parashaEl = document.createElement("div");
+          parashaEl.className = "parasha";
+          parashaEl.textContent = parasha.name;
+          parashaEl.title = "Click for details";
+          if (!parasha.holiday) {
+            parashaEl.style.cursor = "pointer";
+            (function (pName) {
+              parashaEl.addEventListener("click", function (e) {
+                e.stopPropagation();
+                global.Parashot.showParashaPopup(pName);
+              });
+            })(parasha.name);
+          }
+          cell.appendChild(parashaEl);
+        }
       }
 
       container.appendChild(cell);
