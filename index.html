@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hebrew Calendar 5786</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="app-header">
+        <h1>Hebrew &amp; Gregorian Calendar</h1>
+        <p class="subtitle">Side‑by‑side month view with Hebrew dates &amp; holidays</p>
+      </header>
+
+      <main class="app-main">
+        <section class="controls">
+          <div class="control-group" id="greg-month-group">
+            <label for="month-select">Month</label>
+            <select id="month-select"></select>
+          </div>
+          <div class="control-group" id="greg-year-group">
+            <label for="year-input">Gregorian Year</label>
+            <input id="year-input" type="number" min="1" max="9999" />
+          </div>
+          <div class="control-group" id="heb-month-group" style="display:none;">
+            <label for="heb-month-select">Hebrew Month</label>
+            <select id="heb-month-select"></select>
+          </div>
+          <div class="control-group" id="heb-year-group" style="display:none;">
+            <label for="heb-year-input">Hebrew Year</label>
+            <input id="heb-year-input" type="number" min="1" max="9999" />
+          </div>
+          <button id="go-button">Go</button>
+          <button id="btn-view-toggle">Hebrew View</button>
+        </section>
+
+        <section class="calendars">
+          <div class="calendar-panel">
+            <div class="calendar-nav">
+              <button id="btn-prev-year" class="cal-nav-btn" title="Previous year">&laquo;</button>
+              <button id="btn-prev-month" class="cal-nav-btn" title="Previous month">&lsaquo;</button>
+              <h2 id="calendar-heading">Month view (Gregorian + Hebrew)</h2>
+              <button id="btn-next-month" class="cal-nav-btn" title="Next month">&rsaquo;</button>
+              <button id="btn-next-year" class="cal-nav-btn" title="Next year">&raquo;</button>
+            </div>
+            <div id="combined-calendar" class="calendar-grid"></div>
+          </div>
+        </section>
+
+        <section class="stats">
+          <h2>Hebrew Calendar Stats</h2>
+
+          <!-- Top-level buttons -->
+          <div class="stats-controls" id="stats-buttons-row">
+            <button id="btn-stats-back" class="stats-back-btn" style="display:none;">&larr; Back</button>
+            <button id="btn-earliest-pesach" class="stat-btn">Earliest holiday dates</button>
+            <button id="btn-latest-holidays" class="stat-btn">Latest holiday dates</button>
+            <button id="btn-tishrei-list" class="stat-btn">List Hebrew date by year</button>
+            <button id="btn-tishrei-hist" class="stat-btn">Day-of-week histogram</button>
+            <button id="btn-holiday-graph-toggle" class="stat-btn">Holiday line graph</button>
+          </div>
+
+          <!-- Panel: Day-of-week histogram -->
+          <div class="stats-panel" id="panel-hist" style="display:none;">
+            <div class="stats-controls">
+              <label for="hist-kind">Show histogram for</label>
+              <select id="hist-kind">
+                <option value="holiday">Holiday</option>
+                <option value="custom">Custom Hebrew date</option>
+              </select>
+              <select id="hist-holiday-select"></select>
+              <select id="hist-month-select" style="display:none;"></select>
+              <input id="hist-day-input" type="number" min="1" max="30" placeholder="Day" style="display:none;" />
+              <button id="btn-hist-run">Show</button>
+            </div>
+          </div>
+
+          <!-- Panel: List Hebrew date by year -->
+          <div class="stats-panel" id="panel-tishrei-list" style="display:none;">
+            <div class="stats-controls">
+              <label for="tishrei-years-input">Years</label>
+              <input id="tishrei-years-input" type="number" min="1" max="2000" value="19" />
+              <label for="hebrew-date-kind">Date type</label>
+              <select id="hebrew-date-kind">
+                <option value="tishrei1">Tishrei 1</option>
+                <option value="holiday">Holiday</option>
+                <option value="custom">Custom Hebrew date</option>
+              </select>
+              <select id="hebrew-holiday-select"></select>
+              <select id="hebrew-month-select"></select>
+              <input id="hebrew-day-input" type="number" min="1" max="30" placeholder="Day" />
+              <button id="btn-tishrei-list-run">Run</button>
+            </div>
+          </div>
+
+          <!-- Panel: Holiday line graph -->
+          <div class="stats-panel" id="panel-holiday-graph" style="display:none;">
+            <div class="stats-controls">
+              <label for="holiday-select">Holiday</label>
+              <select id="holiday-select"></select>
+              <label for="holiday-years-input">Years</label>
+              <input id="holiday-years-input" type="number" min="1" max="2000" value="50" />
+              <button id="btn-holiday-graph">Show graph</button>
+              <button id="btn-cycle-mode">Show specific years of cycle (19 year cycle)</button>
+            </div>
+            <div class="stats-controls" id="holiday-range-controls" style="display:none;">
+              <label for="year-range-slider">Scroll year window</label>
+              <input id="year-range-slider" type="range" />
+              <span id="year-range-label"></span>
+            </div>
+            <div class="stats-controls cycle-row" id="cycle-controls" style="display:none;">
+              <span>Cycle years (1–19):</span>
+              <div id="cycle-checkboxes" class="cycle-checkboxes"></div>
+              <button id="btn-cycle-graph">Show cycle graph</button>
+            </div>
+          </div>
+
+          <!-- Charts -->
+          <div class="stats-charts">
+            <div class="chart-wrapper" id="holiday-chart-wrapper" style="display:none;">
+              <canvas id="holiday-line-chart"></canvas>
+            </div>
+            <div class="chart-wrapper" id="tishrei-chart-wrapper" style="display:none;">
+              <canvas id="tishrei-hist-chart"></canvas>
+            </div>
+          </div>
+
+          <pre id="stats-output" class="stats-output"></pre>
+        </section>
+      </main>
+
+      <footer class="app-footer">
+        <small>Year 5786 Hebrew calendar tools — static HTML, CSS &amp; vanilla JS</small>
+      </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/hebrew-core.js"></script>
+    <script src="js/stats.js"></script>
+    <script src="js/view.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>
+

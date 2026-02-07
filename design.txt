@@ -1,0 +1,106 @@
+Name: hebrew calandar
+
+Fundemental purpose of code project.
+
+1. Create a calendar that will show a month view of a calandar with hebrew calandar side by side
+2. Create tools that will enable getting stats about the hewbrew calcandar e.g. what is the earliest pesach ever was
+3. The project has to be able to be deployed to a free server provide. e.g. google app or like firebase.
+4. The project has to be esily viewed locally be opening the base html file
+
+Expansion:
+1. 
+Create the app in html.
+Create clean html CSS JS and HTML
+Use vanilla JS
+For JS:
+	1. Define an 'api' module that can read from server if needed
+	2. Define a 'view' layer that will handle rendering
+	3. render HTML on client server can pass only templates and data
+	4. keep files small and self contained not one long files
+	5. keep functions testable and create tests for these functions and create the infrastructurer for testing
+	6. test the correctness of functions and reiterate if you fails tests
+For CSS:
+	1. keep it nice and simple
+	2. you can copy a design that looks nice not cluttered
+	
+How it should look:
+	1. you should see a month of calcandar
+	2. each cell should have the data and the hebrerw date
+	3. Add the hebrew holiday names in the cells
+
+Hebrew calandar rules:
+
+It is now year 2026 hebrerw year 5786
+
+
+List of hebrew holidays:
+
+Pesach: [Nisan 15, Nisan 21]
+Shavuot: [Sivan 6, Sivan 6]
+Rosh Hashanah: [Tishrei 1, Tishrei 2]
+Yom Kippur: [Tishrei 10, Tishrei 10]
+Sukkot: [Tishrei 15, Tishrei 21]
+Shemini Atzeret: [Tishrei 22, Tishrei 22]
+Simchat Torah: [Tishrei 23, Tishrei 23]
+Chanukah: [Kislev 25, Tevet 2]
+Tu Bishvat: [Shevat 15, Shevat 15]
+Purim: [Adar 14, Adar 14]
+Pesach Sheni: [Iyar 14, Iyar 14]
+Lag BaOmer: [Iyar 18, Iyar 18]
+Tisha B’Av: [Av 9, Av 9]
+Tu B’Av: [Av 15, Av 15]
+
+Month names with day count:
+[Tishrey: 30,
+Heshvan: 29|30,
+Kislev: 29|30,
+Tevet: 29,
+Shevat: 30,
+Adar: 29,
+Nisan: 30,
+Iyar: 29,
+Sivan: 30,
+Tammuz: 29,
+Av: 30,
+Elul: 29]
+Adar2: 30 is added after Adar on leap years.
+
+Leap years:
+on years 3,6,8,11,14,17,19 of the cycle we add Adar2
+
+we decide year of the cycle by (year-1)%19 + 1 
+
+Heshvan and Kislev day count are decided by:
+Computing 'Molad_Tishrey' (tishrey new moon).
+
+epoch: Molad_Tishrey for year 5786 was at 22/9/2025 18 hours + 187/1080
+Computing molad tishrey of any year:
+Count the number of months that have passed (each cycle is 12*19+7 and then add the extra years perhaps cretae a lookup for the 19 year of the cycle with the months up until then)
+
+month_length = 29 Days 12 Hours + 793/1080 of an hour.
+Then compute month_count * month_lenngth that is Molad_Tishrey of the required year
+Tishrey 1 will be on the day of the molad. We can postpone it (never have it on the previous day) with the next 4 rules:
+A. Tishrey 1 will not be on Sunday, WednesDay, Friday
+B. If the Molad_Tishrey is after 18 hours postpone Tishrey 1
+C. If the Molad_Tishrey is on monday 15 hours 589/1080 of an hour and the previous year was a leap yea postpone Tishrey 1
+D. If the Molad_Tishrey is on tuesday 9 hours 204/1080 of an hour on a non leap year postpone Tishrey 1
+
+If you have to postpone Tishrey 1 twice to have these rules e.g. after rules 2-4 Tishrey 1 is on sunday then do it.
+
+Once you know Tishrey 1 of year i and year i+1 you know how many days there are in the year.
+1. Day count 353 or 383 -> Heshvan, Kislev both 29 days.
+2. Day count 354 or 384 -> Heshvan29 days, Kislev 30 days.
+3. Day count 355 or 385 -> Heshvan, Kislev both 30 days.
+
+
+2. Stats
+I want to be able to answer questions like:
+When is the earliest pesach in the last 2000 years.
+Give me the dates of tishrey 1 for the last 2000 years.
+Give me a histogram on what day of the week was tishrey 1 in a year range
+
+3. 
+I need to be able to open it with a click on my machine simply opening the html file.
+
+4.
+I need a simple script to deploy this to a free online server so I can show my friends 

@@ -1,0 +1,502 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #0f172a;
+  color: #e5e7eb;
+}
+
+.app {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.app-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.subtitle {
+  margin-top: 0.25rem;
+  color: #9ca3af;
+}
+
+.app-main {
+  background: #020617;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  box-shadow: 0 22px 45px rgba(0, 0, 0, 0.6);
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: flex-end;
+  margin-bottom: 1.5rem;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+label {
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+input,
+select,
+button {
+  font: inherit;
+}
+
+input,
+select {
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.35rem;
+  border: 1px solid #1f2937;
+  background: #020617;
+  color: #e5e7eb;
+}
+
+button {
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, #6366f1, #22c55e);
+  color: white;
+  cursor: pointer;
+  font-weight: 500;
+  transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.1s ease;
+}
+
+button:hover {
+  filter: brightness(1.05);
+  box-shadow: 0 8px 20px rgba(56, 189, 248, 0.25);
+}
+
+button:active {
+  transform: translateY(1px) scale(0.99);
+  box-shadow: none;
+}
+
+.calendars {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.calendar-panel {
+  background: #020617;
+  border-radius: 0.75rem;
+  border: 1px solid #1f2937;
+  padding: 0.75rem;
+}
+
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.calendar-panel h2 {
+  font-size: 1.1rem;
+  margin: 0;
+  color: #e5e7eb;
+  flex: 0 1 auto;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.cal-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 50%;
+  background: #1e293b;
+  color: #94a3b8;
+  border: 1px solid #334155;
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+
+.cal-nav-btn:hover {
+  background: #334155;
+  color: #f1f5f9;
+  border-color: #6366f1;
+  box-shadow: none;
+  filter: none;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.25rem;
+}
+
+.calendar-header-cell {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #9ca3af;
+  padding: 0.3rem 0;
+}
+
+.calendar-cell {
+  min-height: 58px;
+  background: #020617;
+  border-radius: 0.5rem;
+  border: 1px solid #111827;
+  padding: 0.35rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.calendar-cell.empty {
+  background: transparent;
+  border: none;
+}
+
+.date-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+}
+
+.date-main {
+  font-weight: 600;
+}
+
+.date-sub {
+  color: #9ca3af;
+}
+
+.holiday {
+  margin-top: 0.2rem;
+  font-size: 0.7rem;
+  color: #facc15;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+}
+
+.holiday-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  cursor: pointer;
+  font-size: 0.55rem;
+  padding: 0.05rem 0.1rem;
+  border-radius: 0.2rem;
+  line-height: 1;
+  transition: color 0.1s ease, background 0.1s ease;
+  user-select: none;
+}
+
+.holiday-nav-btn:hover {
+  color: #facc15;
+  background: rgba(250, 204, 21, 0.15);
+}
+
+.stats {
+  border-top: 1px solid #1f2937;
+  padding-top: 1rem;
+}
+
+.stats-back-btn {
+  background: linear-gradient(135deg, #475569, #64748b);
+}
+
+.stats-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.stats-panel {
+  background: #0f172a;
+  border: 1px solid #1f2937;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.stats-output {
+  background: #020617;
+  border-radius: 0.5rem;
+  border: 1px solid #1f2937;
+  padding: 0.75rem;
+  max-height: 240px;
+  overflow: auto;
+  font-size: 0.8rem;
+}
+
+.stats-charts {
+  margin-top: 0.5rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+}
+
+.chart-wrapper {
+  position: relative;
+  width: 100%;
+  height: 400px;          /* fixed – Chart.js reads this */
+  background: #020617;
+  border-radius: 0.5rem;
+  border: 1px solid #1f2937;
+  padding: 0.5rem;
+}
+
+/* Let the canvas fill its wrapper; Chart.js handles the rest */
+.chart-wrapper canvas {
+  display: block;
+}
+
+.cycle-checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+}
+
+.cycle-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  cursor: pointer;
+  color: #e5e7eb;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.cycle-label input[type="checkbox"] {
+  accent-color: #6366f1;
+}
+
+.cycle-label-all {
+  font-weight: 600;
+  padding-right: 0.5rem;
+  border-right: 1px solid #334155;
+  margin-right: 0.25rem;
+}
+
+.cycle-row {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.app-footer {
+  margin-top: 1.25rem;
+  text-align: center;
+  color: #6b7280;
+  font-size: 0.8rem;
+}
+
+/* ======== Search popup ======== */
+
+.search-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #334155, #475569);
+  color: #e5e7eb;
+  border: 1px solid #475569;
+  cursor: pointer;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.search-icon-btn:hover {
+  background: linear-gradient(135deg, #475569, #64748b);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.search-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: min(20vh, 140px);
+}
+
+.search-popup {
+  width: min(560px, 92vw);
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 0.75rem;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65);
+  overflow: hidden;
+  animation: searchPopIn 0.12s ease-out;
+}
+
+@keyframes searchPopIn {
+  from { opacity: 0; transform: translateY(-12px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.search-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #334155;
+}
+
+.search-input-icon {
+  font-size: 1.1rem;
+  color: #64748b;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.search-input {
+  flex: 1;
+  border: none !important;
+  background: transparent !important;
+  color: #f1f5f9;
+  font-size: 1rem;
+  outline: none;
+  padding: 0.25rem 0;
+}
+
+.search-input::placeholder {
+  color: #64748b;
+}
+
+.search-hint {
+  font-size: 0.7rem;
+  color: #475569;
+  background: #0f172a;
+  padding: 0.15rem 0.45rem;
+  border-radius: 0.25rem;
+  border: 1px solid #334155;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.search-results {
+  list-style: none;
+  margin: 0;
+  padding: 0.35rem 0;
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.search-results:empty {
+  display: none;
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.55rem 1rem;
+  cursor: pointer;
+  transition: background 0.08s ease;
+}
+
+.search-result-item:hover,
+.search-result-item.active {
+  background: #334155;
+}
+
+.search-result-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.search-result-label {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #f1f5f9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.search-result-detail {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.search-result-badge {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.search-badge-holiday {
+  background: rgba(250, 204, 21, 0.15);
+  color: #facc15;
+}
+
+.search-badge-hebrew {
+  background: rgba(99, 102, 241, 0.15);
+  color: #a5b4fc;
+}
+
+.search-badge-gregorian {
+  background: rgba(34, 197, 94, 0.15);
+  color: #86efac;
+}
+
+/* ======== Responsive ======== */
+
+@media (max-width: 640px) {
+  .app {
+    padding: 0.75rem;
+  }
+
+  .app-main {
+    padding: 0.9rem;
+  }
+
+  .search-popup {
+    width: 96vw;
+  }
+}
+
