@@ -488,15 +488,224 @@ button:active {
 
 @media (max-width: 640px) {
   .app {
-    padding: 0.75rem;
+    padding: 0.5rem;
+  }
+
+  .app-header h1 {
+    font-size: 1.35rem;
+  }
+
+  .subtitle {
+    font-size: 0.8rem;
   }
 
   .app-main {
-    padding: 0.9rem;
+    padding: 0.6rem;
+    border-radius: 0.5rem;
   }
 
+  /* Controls: stack vertically on small screens */
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .control-group {
+    width: 100%;
+  }
+
+  .controls input,
+  .controls select {
+    width: 100%;
+  }
+
+  .controls button {
+    width: 100%;
+  }
+
+  /* Calendar panel */
+  .calendar-panel {
+    padding: 0.4rem;
+    border-radius: 0.4rem;
+  }
+
+  /* Calendar nav: keep on one line, shrink heading */
+  .calendar-nav {
+    gap: 0.25rem;
+  }
+
+  .calendar-panel h2 {
+    font-size: 0.85rem;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  .cal-nav-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  /* Calendar grid: tighter cells */
+  .calendar-grid {
+    gap: 1px;
+  }
+
+  .calendar-cell {
+    min-height: 44px;
+    padding: 0.2rem;
+    border-radius: 0.3rem;
+  }
+
+  .date-row {
+    font-size: 0.62rem;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .date-main {
+    font-size: 0.7rem;
+  }
+
+  .date-sub {
+    font-size: 0.55rem;
+  }
+
+  .calendar-header-cell {
+    font-size: 0.65rem;
+    padding: 0.15rem 0;
+  }
+
+  .holiday {
+    font-size: 0.55rem;
+    gap: 0.05rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .holiday-nav-btn {
+    font-size: 0.45rem;
+    padding: 0.1rem;
+  }
+
+  /* Stats: stack buttons vertically */
+  .stats-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .stats-controls button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .stats-panel {
+    padding: 0.5rem;
+  }
+
+  .stats-panel .stats-controls {
+    gap: 0.4rem;
+  }
+
+  .stats-panel input,
+  .stats-panel select {
+    width: 100%;
+  }
+
+  .stats-output {
+    font-size: 0.65rem;
+    max-height: 180px;
+    padding: 0.5rem;
+  }
+
+  /* Chart shorter on mobile */
+  .chart-wrapper {
+    height: 280px;
+  }
+
+  /* Cycle checkboxes: wrap more tightly */
+  .cycle-checkboxes {
+    gap: 0.15rem 0.4rem;
+  }
+
+  .cycle-label {
+    font-size: 0.75rem;
+  }
+
+  /* Search popup */
   .search-popup {
     width: 96vw;
+  }
+
+  .search-overlay {
+    padding-top: 10vh;
+  }
+
+  .search-input {
+    font-size: 0.9rem;
+  }
+
+  .search-result-label {
+    font-size: 0.82rem;
+  }
+
+  .search-result-detail {
+    font-size: 0.7rem;
+  }
+
+  .search-icon-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  /* Footer */
+  .app-footer {
+    font-size: 0.7rem;
+  }
+}
+
+/* Extra-small phones (< 380px) */
+@media (max-width: 380px) {
+  .app {
+    padding: 0.3rem;
+  }
+
+  .app-header h1 {
+    font-size: 1.1rem;
+  }
+
+  .calendar-cell {
+    min-height: 38px;
+    padding: 0.15rem;
+  }
+
+  .date-main {
+    font-size: 0.6rem;
+  }
+
+  .date-sub {
+    font-size: 0.5rem;
+  }
+
+  .holiday {
+    font-size: 0.48rem;
+  }
+
+  .calendar-header-cell {
+    font-size: 0.58rem;
+  }
+
+  .calendar-panel h2 {
+    font-size: 0.75rem;
+  }
+
+  .cal-nav-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 0.85rem;
   }
 }
 
