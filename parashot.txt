@@ -1,0 +1,34 @@
+[Bereshit, Noah, Lech-Lecha, Vayera, Chayei Sarah, Toldot, Vayetze, Vayishlach, Vayeshev, Miketz, Vayigash, Vayechi,
+Shemot, Vaera, Bo, Beshalach, Yitro, Mishpatim, Terumah, Tetzaveh, Ki Tisa, Vayakhel, Pekudei,
+Vayikra, Tzav, Shemini, Tazria, Metzora, Achrei Mot, Kedoshim, Emor, Behar, Bechukotai,
+Bamidbar, Naso, Behaalotecha, Shelach, Korach, Chukat, Balak, Pinchas, Matot, Masei,
+Devarim, Vaetchanan, Eikev, Reeh, Shoftim, Ki Tetze, Ki Tavo, Nitsavim, Vayelech, Haazinu, Vezot Haberakhah]
+
+===========================================
+
+rules for joining parashot:
+[Vayakhel + Pekudei -> joined when year is short enough that separate readings would exceed available Sabbaths,
+
+Tazria + Metzora -> joined in non-leap years,
+
+Achrei Mot + Kedoshim -> joined in non-leap years,
+
+Behar + Bechukotai -> joined in non-leap years,
+
+Chukat + Balak -> joined when needed to avoid conflict with festival readings,
+
+Matot + Masei -> joined when needed to ensure Devarim precedes Tisha B’Av properly,
+
+Nitsavim + Vayelech -> joined when Rosh Hashanah falls on Thursday or Saturday (so there are fewer available Sabbaths before the new year)]
+
+===============================================================
+
+The first parasha is read on the saturday after sukot and the last is read on simchat torah
+
+rules on what holidays the parasha is not read.
+
+[Pesach (all festival days that fall on Shabbat) -> regular parasha not read,
+Shavuot (when on Shabbat) -> regular parasha not read,
+Rosh Hashanah (when on Shabbat) -> regular parasha not read,
+Yom Kippur (when on Shabbat) -> regular parasha not read,
+Sukkot (first day when on Shabbat) -> regular parasha not read]

@@ -1,0 +1,26 @@
+Add a dhiot stat tab to the stats.
+
+Show a selection of how many years ago the stats are for. default to 1000.
+List for each dhia:
+1. In how many years it was used (number and percent).
+2. what is the last time it was used
+3. What is the next time it will be used
+4. Show a visualization of a week on a time line and color on the week when it is used
+
+# Fix 1
+Fix visualization keep the top visualization of what year it was used.
+With the caption "each cell is one year. Colored = rule was used that year"
+Every 50 years write the year in the cell (make it wider for that).
+
+Visulization of week.
+have a strip that represents the week with day seperators for each dhia. And color the stript where the dhia is effective.
+For lo adu - color sunday, wednesday ...
+For molad zaken color the last quaterr of each day 
+...
+
+# Fix 2
+Make the week strips the same width for all dhiot.
+For dhia c and d also add a stript that represents the week and shows where it is effective.
+The width of the colore strip should be goverrned by the relative length of the day where it is effective.
+
+Also for a click in the year cells jump in the calandar to that year at tishrey 1.

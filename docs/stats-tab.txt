@@ -1,0 +1,60 @@
+Feature explanation: Stats tab
+=============================
+
+The Stats tab ("Hebrew Calendar Stats") provides tools to explore the Hebrew
+calendar over many years. Use the buttons to open one of the following panels.
+
+
+1. List Hebrew date by year
+---------------------------
+Shows a table: for each of the last N Hebrew years, the Gregorian date when
+a chosen Hebrew date (or holiday) occurs.
+
+- Choose how many years to show (e.g. 19, 50).
+- Choose date type:
+  - Holiday: pick a holiday (e.g. Pesach, Rosh Hashanah). The list shows
+    the Gregorian date of that holiday for each year.
+  - Custom Hebrew date: pick Hebrew month and day (e.g. 15 Nisan). The list
+    shows the Gregorian date of that Hebrew date for each year.
+- Click "Run" to see the list in the text area below.
+
+
+2. Day-of-week histogram
+-------------------------
+Shows how often a given Hebrew date (or holiday) falls on each weekday
+(Sun–Sat) over the last 2000 Hebrew years.
+
+- Choose Holiday or Custom Hebrew date (and pick the holiday or month/day).
+- Click "Show" to display a bar chart: one bar per weekday; the height is
+  the number of years that date fell on that weekday.
+
+Useful for facts like "Pesach cannot fall on Monday, Wednesday, or Friday"
+(lo BaDU) — those bars will be zero.
+
+
+3. Holiday line graph
+---------------------
+Shows how the Gregorian date of a holiday (or custom Hebrew date) changes
+over Hebrew years.
+
+- Pick a holiday (or custom Hebrew date if the option is available).
+- Set the number of years (e.g. 50).
+- Click "Show graph". A line chart appears: X = Hebrew year, Y = Gregorian
+  day-of-year. Hover for exact date and weekday.
+- If you request more years than fit on screen, a slider appears to scroll
+  the time window.
+
+19-year cycle mode:
+- Click "Show specific years of cycle" to reveal checkboxes for cycle
+  years 1–19.
+- Use "Select All" or clear some to choose which years of the 19-year
+  Metonic cycle to include.
+- Click "Show cycle graph". The graph shows one line (or set of points)
+  per selected cycle year, so you can compare how the holiday shifts for
+  year 1 vs 7 vs 19, etc.
+
+
+4. Back button
+--------------
+When a stat panel is open, a "← Back" button appears. Click it to close
+the panel and return to the row of stat buttons.
