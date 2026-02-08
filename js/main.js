@@ -5,8 +5,11 @@
   const HebrewCore = () => global.HebrewCore;
   let holidayLineChart = null;
   let tishreiHistChart = null;
+  let moonLineChart = null;
   const DEFAULT_GRAPH_YEARS = 50;
   const MAX_VISIBLE_POINTS = 50; // points shown at once; slider if total > this
+  const MOON_GRAPH_DEFAULT_MONTHS = 50;
+  const MOON_GRAPH_MAX_VISIBLE = 80;
 
   function hebrewDateFromGregorian(gYear, gMonthIndex, gDay) {
     const core = HebrewCore();
@@ -93,6 +96,18 @@
     const cycleControls = document.getElementById("cycle-controls");
     const cycleCheckboxesDiv = document.getElementById("cycle-checkboxes");
     const btnCycleGraph = document.getElementById("btn-cycle-graph");
+
+    /* --- Moon graph panel --- */
+    const btnMoonGraphToggle = document.getElementById("btn-moon-graph-toggle");
+    const panelMoonGraph = document.getElementById("panel-moon-graph");
+    const moonStartMonthInput = document.getElementById("moon-start-month");
+    const moonEndMonthInput = document.getElementById("moon-end-month");
+    const btnMoonGraph = document.getElementById("btn-moon-graph");
+    const moonRangeControls = document.getElementById("moon-range-controls");
+    const moonRangeSlider = document.getElementById("moon-range-slider");
+    const moonRangeLabel = document.getElementById("moon-range-label");
+    const moonChartWrapper = document.getElementById("moon-chart-wrapper");
+    const moonLineCanvas = document.getElementById("moon-line-chart");
 
     /* --- Dehiyyot stats panel --- */
     const btnDehiyyotStats = document.getElementById("btn-dehiyyot-stats");
@@ -661,6 +676,15 @@
       });
     }
 
+    // "New moon vs 29d 12h 793h" — toggle panel and show graph
+    if (btnMoonGraphToggle) {
+      btnMoonGraphToggle.addEventListener("click", () => {
+        activateStat(btnMoonGraphToggle);
+        togglePanel("panel-moon-graph");
+        if (btnMoonGraph) btnMoonGraph.click();
+      });
+    }
+
     // "Dehiyyot (postponement) stats" — toggle its panel and show data for current selection
     if (btnDehiyyotStats) {
       btnDehiyyotStats.addEventListener("click", () => {
@@ -1087,6 +1111,119 @@
             },
           },
         });
+      });
+    }
+
+    /* ================ New moon vs 29d 12h 793h graph ================ */
+
+    if (btnMoonGraph && moonLineCanvas && typeof global.Moon !== "undefined") {
+      const Moon = global.Moon;
+      let moonSeries = null;
+      let moonWindowSize = MOON_GRAPH_MAX_VISIBLE;
+
+      function updateMoonChart() {
+        if (!moonSeries) return;
+        let startIdx = 0;
+        if (moonRangeSlider && moonSeries.lunations.length > moonWindowSize) {
+          const maxStart = moonSeries.lunations.length - moonWindowSize;
+          startIdx = Math.min(Number(moonRangeSlider.value) || 0, maxStart);
+        }
+        const endIdx = Math.min(startIdx + moonWindowSize, moonSeries.lunations.length);
+        const labels = moonSeries.labels.slice(startIdx, endIdx);
+        const data = moonSeries.hoursLater.slice(startIdx, endIdx);
+
+        if (moonRangeLabel && moonSeries.labels.length) {
+          moonRangeLabel.textContent =
+            "Months " + moonSeries.labels[startIdx] + " – " + moonSeries.labels[endIdx - 1] +
+            " (" + (endIdx - startIdx) + " of " + moonSeries.lunations.length + ")";
+        }
+
+        const ctx = moonLineCanvas.getContext("2d");
+        if (moonLineChart) moonLineChart.destroy();
+        const dataMin = data.length ? Math.min.apply(null, data) : 0;
+        const dataMax = data.length ? Math.max.apply(null, data) : 0;
+        const yMin = dataMin - 1;
+        const yMax = dataMax + 1;
+
+        moonLineChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: labels,
+            datasets: [{
+              label: "Hours later than 29d 12h 793h",
+              data: data,
+              borderColor: "rgba(59, 130, 246, 1)",
+              backgroundColor: "rgba(59, 130, 246, 0.2)",
+              tension: 0.1,
+              pointRadius: data.length <= 60 ? 2 : 0,
+            }],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                title: { display: true, text: "Month (lunation)", color: "#e5e7eb" },
+                ticks: { color: "#e5e7eb", maxTicksLimit: 15 },
+                grid: { color: "rgba(31, 41, 55, 0.5)" },
+              },
+              y: {
+                title: { display: true, text: "Hours later", color: "#e5e7eb" },
+                min: yMin,
+                max: yMax,
+                ticks: { color: "#e5e7eb" },
+                grid: { color: "rgba(31, 41, 55, 0.5)" },
+              },
+            },
+            plugins: {
+              legend: { labels: { color: "#e5e7eb" } },
+              tooltip: {
+                callbacks: {
+                  title: function (items) {
+                    if (!items.length) return "";
+                    return "Lunation " + items[0].label;
+                  },
+                  label: function (context) {
+                    const h = context.parsed.y;
+                    return (h != null ? h.toFixed(2) : "") + " h later";
+                  },
+                },
+              },
+            },
+          },
+        });
+      }
+
+      btnMoonGraph.addEventListener("click", function () {
+        statsOutput.textContent = "";
+        if (typeof Chart === "undefined" || !moonLineCanvas) return;
+
+        const now = Moon.lunationNumber(new Date());
+        let startN = moonStartMonthInput ? Number(moonStartMonthInput.value) : now - MOON_GRAPH_DEFAULT_MONTHS + 1;
+        let endN = moonEndMonthInput ? Number(moonEndMonthInput.value) : now;
+        if (!Number.isFinite(startN)) startN = now - MOON_GRAPH_DEFAULT_MONTHS + 1;
+        if (!Number.isFinite(endN)) endN = now;
+        if (startN > endN) { const t = startN; startN = endN; endN = t; }
+        if (moonStartMonthInput) moonStartMonthInput.value = String(startN);
+        if (moonEndMonthInput) moonEndMonthInput.value = String(endN);
+
+        moonSeries = Moon.newMoonVsDefinitionRange(startN, endN);
+        if (!moonSeries.lunations.length) return;
+
+        if (moonChartWrapper) moonChartWrapper.style.display = "block";
+        const total = moonSeries.lunations.length;
+        const needsSlider = total > moonWindowSize;
+
+        if (moonRangeControls) moonRangeControls.style.display = needsSlider ? "flex" : "none";
+        if (moonRangeSlider && needsSlider) {
+          moonRangeSlider.min = "0";
+          moonRangeSlider.max = String(total - moonWindowSize);
+          moonRangeSlider.step = "1";
+          moonRangeSlider.value = String(Math.max(0, total - moonWindowSize));
+          moonRangeSlider.oninput = updateMoonChart;
+        }
+
+        updateMoonChart();
       });
     }
 
