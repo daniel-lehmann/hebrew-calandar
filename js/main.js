@@ -497,10 +497,56 @@
       btnStatsBack.addEventListener("click", deactivateStat);
     }
 
-    // "List Hebrew date by year" — toggle its panel
+    // Run list Hebrew date by year (current selection)
+    function runListStat() {
+      const core = global.HebrewCore;
+      if (!core) {
+        if (statsOutput) statsOutput.textContent = "HebrewCore not loaded.";
+        return;
+      }
+      let years =
+        tishreiYearsInput && tishreiYearsInput.value
+          ? Number(tishreiYearsInput.value)
+          : 19;
+      if (!Number.isFinite(years) || years <= 0) years = 19;
+      if (years > 2000) years = 2000;
+      const kind = hebrewDateKind ? hebrewDateKind.value : "holiday";
+      let monthName, day, label;
+      if (kind === "holiday" && hebrewHolidaySelect) {
+        const holidayName = hebrewHolidaySelect.value;
+        const holidays = core.HEBREW_HOLIDAYS || [];
+        const holiday = holidays.find((h) => h.name === holidayName);
+        if (!holiday) {
+          if (statsOutput) statsOutput.textContent = "Unknown holiday: " + holidayName;
+          return;
+        }
+        monthName = holiday.month;
+        day = holiday.startDay;
+        label = holiday.name;
+      } else {
+        monthName = hebrewMonthSelect ? hebrewMonthSelect.value : "Tishrey";
+        day = hebrewDayInput ? Number(hebrewDayInput.value) : 1;
+        if (!monthName || !day) {
+          if (statsOutput) statsOutput.textContent = "Please choose a Hebrew month and day.";
+          return;
+        }
+        label = day + " " + monthName;
+      }
+      if (statsOutput) {
+        statsOutput.textContent = global.Stats.listHebrewDateYears(
+          monthName,
+          day,
+          years,
+          label
+        );
+      }
+    }
+
+    // "List Hebrew date by year" — toggle its panel and show data for current selection
     btnTishreiList.addEventListener("click", () => {
       activateStat(btnTishreiList);
       togglePanel("panel-tishrei-list");
+      runListStat();
     });
 
     // Toggle sub-fields based on date type
@@ -515,63 +561,84 @@
       syncListDateFields(); // set initial state
     }
 
-    // Run button inside the panel
     if (btnTishreiListRun) {
-      btnTishreiListRun.addEventListener("click", () => {
-        const core = global.HebrewCore;
-        if (!core) {
-          statsOutput.textContent = "HebrewCore not loaded.";
+      btnTishreiListRun.addEventListener("click", runListStat);
+    }
+
+    // Run day-of-week histogram (current selection)
+    function runHistStat() {
+      var core = global.HebrewCore;
+      if (!core) return;
+      var monthName, day, label;
+      var kind = histKind ? histKind.value : "holiday";
+      if (kind === "holiday" && histHolidaySelect) {
+        var holidayName = histHolidaySelect.value;
+        var holidays = core.HEBREW_HOLIDAYS || [];
+        var holiday = holidays.find(function (h) { return h.name === holidayName; });
+        if (!holiday) {
+          if (statsOutput) statsOutput.textContent = "Unknown holiday: " + holidayName;
           return;
         }
-
-        let years =
-          tishreiYearsInput && tishreiYearsInput.value
-            ? Number(tishreiYearsInput.value)
-            : 19;
-        if (!Number.isFinite(years) || years <= 0) years = 19;
-        if (years > 2000) years = 2000;
-
-        const kind = hebrewDateKind ? hebrewDateKind.value : "holiday";
-
-        let monthName, day, label;
-
-        if (kind === "holiday" && hebrewHolidaySelect) {
-          const holidayName = hebrewHolidaySelect.value;
-          const holidays = core.HEBREW_HOLIDAYS || [];
-          const holiday = holidays.find((h) => h.name === holidayName);
-          if (!holiday) {
-            statsOutput.textContent = "Unknown holiday: " + holidayName;
-            return;
-          }
-          monthName = holiday.month;
-          day = holiday.startDay;
-          label = holiday.name;
-        } else {
-          monthName = hebrewMonthSelect ? hebrewMonthSelect.value : "Tishrey";
-          day = hebrewDayInput ? Number(hebrewDayInput.value) : 1;
-          if (!monthName || !day) {
-            statsOutput.textContent = "Please choose a Hebrew month and day.";
-            return;
-          }
-          label = day + " " + monthName;
+        monthName = holiday.month;
+        day = holiday.startDay;
+        label = holiday.name;
+      } else {
+        monthName = histMonthSelect ? histMonthSelect.value : "Tishrey";
+        day = histDayInput ? Number(histDayInput.value) : 1;
+        if (!monthName || !day) {
+          if (statsOutput) statsOutput.textContent = "Please choose a Hebrew month and day.";
+          return;
         }
-
-        statsOutput.textContent = global.Stats.listHebrewDateYears(
-          monthName,
-          day,
-          years,
-          label
-        );
+        label = day + " " + monthName;
+      }
+      if (statsOutput) statsOutput.textContent = "";
+      var hist = global.Stats.weekdayHistogramData(monthName, day, label);
+      if (!hist) return;
+      if (tishreiChartWrapper) tishreiChartWrapper.style.display = "block";
+      var ctx = tishreiHistCanvas.getContext("2d");
+      if (tishreiHistChart) tishreiHistChart.destroy();
+      tishreiHistChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: hist.labels,
+          datasets: [
+            {
+              label: hist.label + " – day of week (last 2000 years)",
+              data: hist.data,
+              backgroundColor: "rgba(96, 165, 250, 0.6)",
+              borderColor: "rgba(96, 165, 250, 1)",
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              ticks: { color: "#e5e7eb" },
+              grid: { color: "rgba(31, 41, 55, 0.5)" },
+            },
+            y: {
+              beginAtZero: true,
+              ticks: { color: "#e5e7eb" },
+              grid: { color: "rgba(31, 41, 55, 0.5)" },
+            },
+          },
+          plugins: {
+            legend: { labels: { color: "#e5e7eb" } },
+          },
+        },
       });
     }
 
-    // "Day-of-week histogram" — toggle its panel
+    // "Day-of-week histogram" — toggle its panel and show data for current selection
     btnTishreiHist.addEventListener("click", () => {
       activateStat(btnTishreiHist);
       togglePanel("panel-hist");
+      runHistStat();
     });
 
-    // Toggle holiday vs custom fields inside the histogram panel
     if (histKind) {
       histKind.addEventListener("change", () => {
         var isCustom = histKind.value === "custom";
@@ -581,98 +648,29 @@
       });
     }
 
-    // Run the histogram
     if (btnHistRun) {
-      btnHistRun.addEventListener("click", () => {
-        var core = global.HebrewCore;
-        if (!core) return;
-
-        var monthName, day, label;
-        var kind = histKind ? histKind.value : "holiday";
-
-        if (kind === "holiday" && histHolidaySelect) {
-          var holidayName = histHolidaySelect.value;
-          var holidays = core.HEBREW_HOLIDAYS || [];
-          var holiday = holidays.find(function (h) { return h.name === holidayName; });
-          if (!holiday) {
-            statsOutput.textContent = "Unknown holiday: " + holidayName;
-            return;
-          }
-          monthName = holiday.month;
-          day = holiday.startDay;
-          label = holiday.name;
-        } else {
-          monthName = histMonthSelect ? histMonthSelect.value : "Tishrey";
-          day = histDayInput ? Number(histDayInput.value) : 1;
-          if (!monthName || !day) {
-            statsOutput.textContent = "Please choose a Hebrew month and day.";
-            return;
-          }
-          label = day + " " + monthName;
-        }
-
-        statsOutput.textContent = "";
-        var hist = global.Stats.weekdayHistogramData(monthName, day, label);
-        if (!hist) return;
-
-        if (tishreiChartWrapper) tishreiChartWrapper.style.display = "block";
-
-        var ctx = tishreiHistCanvas.getContext("2d");
-        if (tishreiHistChart) tishreiHistChart.destroy();
-
-        tishreiHistChart = new Chart(ctx, {
-          type: "bar",
-          data: {
-            labels: hist.labels,
-            datasets: [
-              {
-                label: hist.label + " – day of week (last 2000 years)",
-                data: hist.data,
-                backgroundColor: "rgba(96, 165, 250, 0.6)",
-                borderColor: "rgba(96, 165, 250, 1)",
-                borderWidth: 1,
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              x: {
-                ticks: { color: "#e5e7eb" },
-                grid: { color: "rgba(31, 41, 55, 0.5)" },
-              },
-              y: {
-                beginAtZero: true,
-                ticks: { color: "#e5e7eb" },
-                grid: { color: "rgba(31, 41, 55, 0.5)" },
-              },
-            },
-            plugins: {
-              legend: { labels: { color: "#e5e7eb" } },
-            },
-          },
-        });
-      });
+      btnHistRun.addEventListener("click", runHistStat);
     }
 
-    // "Holiday line graph" — toggle its panel
+    // "Holiday line graph" — toggle its panel and show graph for current selection
     if (btnHolidayGraphToggle) {
       btnHolidayGraphToggle.addEventListener("click", () => {
         activateStat(btnHolidayGraphToggle);
         togglePanel("panel-holiday-graph");
+        if (btnHolidayGraph) btnHolidayGraph.click();
       });
     }
 
-    // "Dehiyyot (postponement) stats" — toggle its panel
+    // "Dehiyyot (postponement) stats" — toggle its panel and show data for current selection
     if (btnDehiyyotStats) {
       btnDehiyyotStats.addEventListener("click", () => {
         activateStat(btnDehiyyotStats);
         togglePanel("panel-dehiyyot");
+        if (btnDehiyyotRun) btnDehiyyotRun.click();
       });
     }
 
-    // Dehiyyot Run button
+    // Dehiyyot Run button (also invoked when panel opens)
     if (btnDehiyyotRun && dehiyyotResults && dehiyyotTimeline) {
       const DEHYYOT_NAMES = {
         A: "A (lo ADU — RH not Sun/Wed/Fri)",
