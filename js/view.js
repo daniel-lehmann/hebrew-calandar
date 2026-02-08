@@ -170,6 +170,32 @@
         }
       }
 
+      // Molad of Tishrei: on the day of the molad show time; on Tishrei 1 if molad was another day show "Molad was on ..."
+      var core = global.HebrewCore;
+      if (core && core.getMoladTishrei) {
+        var molad = core.getMoladTishrei(hebrewYear);
+        var moladLocalY = molad.date.getFullYear();
+        var moladLocalM = molad.date.getMonth();
+        var moladLocalD = molad.date.getDate();
+        var thisDayIsMoladDay = (gregorianYear === moladLocalY && monthIndex === moladLocalM && day === moladLocalD);
+        var thisDayIsTishrei1 = (hebrewMonthName === "Tishrey" && hebrewDay === 1);
+        var moladTimeStr = molad.hour + "h " + molad.chalakim + "/1080";
+        var moladWeekdayStr = WEEKDAY_LABELS[molad.weekday];
+        if (thisDayIsMoladDay) {
+          var moladEl = document.createElement("div");
+          moladEl.className = "molad-time";
+          moladEl.textContent = "Molad " + moladTimeStr;
+          moladEl.title = "Molad Tishrei " + hebrewYear + " — " + moladWeekdayStr + " " + moladTimeStr;
+          cell.appendChild(moladEl);
+        } else if (thisDayIsTishrei1) {
+          var moladWasEl = document.createElement("div");
+          moladWasEl.className = "molad-was";
+          moladWasEl.textContent = "Molad was on " + moladWeekdayStr + " " + moladTimeStr;
+          moladWasEl.title = "Molad Tishrei " + hebrewYear + " occurred on " + moladWeekdayStr + " " + moladTimeStr;
+          cell.appendChild(moladWasEl);
+        }
+      }
+
       container.appendChild(cell);
     }
   }
@@ -370,6 +396,31 @@
             })(parasha.name);
           }
           cell.appendChild(parashaEl);
+        }
+      }
+
+      // Molad of Tishrei (Hebrew view)
+      if (core.getMoladTishrei) {
+        var molad = core.getMoladTishrei(hebrewYear);
+        var moladLocalY = molad.date.getFullYear();
+        var moladLocalM = molad.date.getMonth();
+        var moladLocalD = molad.date.getDate();
+        var thisDayIsMoladDay = (greg.year === moladLocalY && greg.monthIndex === moladLocalM && greg.day === moladLocalD);
+        var thisDayIsTishrei1 = (hebrewMonthName === "Tishrey" && day === 1);
+        var moladTimeStr = molad.hour + "h " + molad.chalakim + "/1080";
+        var moladWeekdayStr = WEEKDAY_LABELS[molad.weekday];
+        if (thisDayIsMoladDay) {
+          var moladEl = document.createElement("div");
+          moladEl.className = "molad-time";
+          moladEl.textContent = "Molad " + moladTimeStr;
+          moladEl.title = "Molad Tishrei " + hebrewYear + " — " + moladWeekdayStr + " " + moladTimeStr;
+          cell.appendChild(moladEl);
+        } else if (thisDayIsTishrei1) {
+          var moladWasEl = document.createElement("div");
+          moladWasEl.className = "molad-was";
+          moladWasEl.textContent = "Molad was on " + moladWeekdayStr + " " + moladTimeStr;
+          moladWasEl.title = "Molad Tishrei " + hebrewYear + " occurred on " + moladWeekdayStr + " " + moladTimeStr;
+          cell.appendChild(moladWasEl);
         }
       }
 

@@ -311,6 +311,184 @@ button:active {
   align-items: center;
 }
 
+/* Dehiyyot (postponement) stats panel */
+.dehiyyot-results {
+  margin-top: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.dehiyyot-summary,
+.dehiyyot-viz-caption,
+.dehiyyot-week-caption {
+  color: #e5e7eb;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.dehiyyot-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  color: #e5e7eb;
+}
+
+.dehiyyot-table th,
+.dehiyyot-table td {
+  border: 1px solid #334155;
+  padding: 0.35rem 0.5rem;
+  text-align: left;
+}
+
+.dehiyyot-table th {
+  background: #1e293b;
+  font-weight: 600;
+}
+
+.dehiyyot-timeline {
+  margin-top: 1rem;
+}
+
+.dehiyyot-viz {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.dehiyyot-viz-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dehiyyot-viz-label {
+  flex-shrink: 0;
+  width: 1.5rem;
+  font-weight: 600;
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
+.dehiyyot-viz-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  min-height: 8px;
+}
+
+.dehiyyot-year-cell {
+  display: inline-block;
+  width: 6px;
+  height: 8px;
+  background: #334155;
+  border-radius: 1px;
+  cursor: pointer;
+}
+
+.dehiyyot-year-cell.dehiyyot-used {
+  background: #3b82f6;
+}
+
+.dehiyyot-year-cell.dehiyyot-year-cell-label {
+  min-width: 28px;
+  width: auto;
+  font-size: 0.6rem;
+  color: #94a3b8;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 2px;
+}
+
+.dehiyyot-year-cell.dehiyyot-year-cell-label.dehiyyot-used {
+  color: #e5e7eb;
+}
+
+/* Week strip per rule: day separators, color where rule is effective */
+.dehiyyot-week-rules {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.dehiyyot-week-rule-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dehiyyot-week-rule-strip {
+  display: flex;
+  align-items: stretch;
+  flex-wrap: nowrap;
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  max-width: 560px;
+  min-height: 24px;
+  border: 1px solid #334155;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.dehiyyot-day-sep {
+  width: 2px;
+  background: #475569;
+  flex-shrink: 0;
+}
+
+.dehiyyot-day-cell {
+  flex: 1;
+  min-width: 24px;
+  background: #334155;
+  color: #64748b;
+  font-size: 0.65rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dehiyyot-day-cell.dehiyyot-effective {
+  background: #3b82f6;
+  color: #e5e7eb;
+}
+
+.dehiyyot-week-rule-strip.dehiyyot-quarters {
+  display: flex;
+  align-items: stretch;
+}
+
+.dehiyyot-quarter {
+  flex: 1;
+  min-width: 6px;
+  background: #334155;
+}
+
+.dehiyyot-quarter.dehiyyot-effective {
+  background: #3b82f6;
+}
+
+.dehiyyot-day-slot {
+  flex: 1;
+  display: flex;
+  min-width: 0;
+}
+
+.dehiyyot-day-part {
+  background: #334155;
+  min-height: 20px;
+  display: block;
+}
+
+.dehiyyot-day-part.dehiyyot-day-part-inactive {
+  background: #334155;
+}
+
+.dehiyyot-day-part.dehiyyot-effective {
+  background: #3b82f6;
+}
+
 .app-footer {
   margin-top: 1.25rem;
   text-align: center;
@@ -333,6 +511,20 @@ button:active {
 .parasha:hover {
   color: #c4b5fd;
   text-decoration: underline;
+}
+
+/* Molad of Tishrei: on the day of the molad, or on Tishrei 1 when molad was another day */
+.molad-time {
+  margin-top: 0.15rem;
+  font-size: 0.6rem;
+  color: #67e8f9;
+}
+
+.molad-was {
+  margin-top: 0.15rem;
+  font-size: 0.58rem;
+  color: #94a3b8;
+  font-style: italic;
 }
 
 /* ======== Parasha popup ======== */
@@ -711,6 +903,11 @@ button:active {
     font-size: 0.48rem;
   }
 
+  .molad-time,
+  .molad-was {
+    font-size: 0.5rem;
+  }
+
   .parasha-popup-box {
     width: 96vw;
     padding: 1rem;
@@ -829,6 +1026,11 @@ button:active {
 
   .parasha {
     font-size: 0.42rem;
+  }
+
+  .molad-time,
+  .molad-was {
+    font-size: 0.44rem;
   }
 
   .calendar-header-cell {

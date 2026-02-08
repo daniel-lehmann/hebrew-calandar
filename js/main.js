@@ -94,6 +94,14 @@
     const cycleCheckboxesDiv = document.getElementById("cycle-checkboxes");
     const btnCycleGraph = document.getElementById("btn-cycle-graph");
 
+    /* --- Dehiyyot stats panel --- */
+    const btnDehiyyotStats = document.getElementById("btn-dehiyyot-stats");
+    const panelDehiyyot = document.getElementById("panel-dehiyyot");
+    const dehiyyotYearsInput = document.getElementById("dehiyyot-years-input");
+    const btnDehiyyotRun = document.getElementById("btn-dehiyyot-run");
+    const dehiyyotResults = document.getElementById("dehiyyot-results");
+    const dehiyyotTimeline = document.getElementById("dehiyyot-timeline");
+
     const CYCLE_COLORS = [
       "#ef4444", "#f97316", "#f59e0b", "#eab308", "#84cc16",
       "#22c55e", "#14b8a6", "#06b6d4", "#0ea5e9", "#3b82f6",
@@ -655,6 +663,149 @@
         togglePanel("panel-holiday-graph");
       });
     }
+
+    // "Dehiyyot (postponement) stats" — toggle its panel
+    if (btnDehiyyotStats) {
+      btnDehiyyotStats.addEventListener("click", () => {
+        activateStat(btnDehiyyotStats);
+        togglePanel("panel-dehiyyot");
+      });
+    }
+
+    // Dehiyyot Run button
+    if (btnDehiyyotRun && dehiyyotResults && dehiyyotTimeline) {
+      const DEHYYOT_NAMES = {
+        A: "A (lo ADU — RH not Sun/Wed/Fri)",
+        B: "B (Molad Zaken — molad ≥ noon)",
+        C: "C (BeTU'TeKPaT — Mon after leap year)",
+        D: "D (GaTRaD — Tue in common year)",
+      };
+      btnDehiyyotRun.addEventListener("click", () => {
+        const years = dehiyyotYearsInput ? Math.max(1, Math.min(4000, Number(dehiyyotYearsInput.value) || 1000)) : 1000;
+        const data = global.Stats && global.Stats.dehiyyotStatsData ? global.Stats.dehiyyotStatsData(years) : null;
+        if (!data) {
+          dehiyyotResults.innerHTML = "<p>HebrewCore or dehiyyot stats not available.</p>";
+          dehiyyotTimeline.innerHTML = "";
+          return;
+        }
+        const { rules, timeline, startYear, endYear, totalYears } = data;
+        let html = "<table class=\"dehiyyot-table\"><thead><tr><th>Rule</th><th>Years used</th><th>Percent</th><th>Last used (year)</th><th>Next used (year)</th></tr></thead><tbody>";
+        ["A", "B", "C", "D"].forEach((k) => {
+          const r = rules[k];
+          html += "<tr><td>" + DEHYYOT_NAMES[k] + "</td><td>" + r.count + "</td><td>" + r.percent + "%</td><td>" + (r.lastUsed != null ? r.lastUsed : "—") + "</td><td>" + (r.nextUsed != null ? r.nextUsed : "—") + "</td></tr>";
+        });
+        html += "</tbody></table>";
+        html = "<p class=\"dehiyyot-summary\">Rosh Hashanah postponement rules (dehiyyot), " + totalYears + " Hebrew years (" + startYear + "–" + endYear + ").</p>" + html;
+        dehiyyotResults.innerHTML = html;
+
+        // Top visualization: year strip — each cell is one year; colored = rule was used
+        const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        let tlHtml = "<p class=\"dehiyyot-viz-caption\">Each cell is one year. Colored = rule was used that year.</p>";
+        tlHtml += "<div class=\"dehiyyot-viz\">";
+        ["A", "B", "C", "D"].forEach((ruleKey) => {
+          tlHtml += "<div class=\"dehiyyot-viz-row\"><span class=\"dehiyyot-viz-label\">" + ruleKey + "</span><div class=\"dehiyyot-viz-strip\">";
+          timeline.forEach((t, idx) => {
+            const used = t.rules[ruleKey];
+            const title = t.year + " " + (used ? "used" : "") + " Tishrei 1: " + t.dateStr + " (" + WEEKDAY_LABELS[t.weekday] + ") — click to jump to calendar";
+            const isLabelYear = idx % 50 === 0;
+            const cellClass = "dehiyyot-year-cell" + (used ? " dehiyyot-used" : "") + (isLabelYear ? " dehiyyot-year-cell-label" : "");
+            tlHtml += "<span class=\"" + cellClass + "\" data-year=\"" + t.year + "\" title=\"" + title + "\">" + (isLabelYear ? t.year : "") + "</span>";
+          });
+          tlHtml += "</div></div>";
+        });
+        tlHtml += "</div>";
+
+        // Week strip per rule: day separators, color where the rule is effective
+        tlHtml += "<p class=\"dehiyyot-week-caption\">Visualization of week: strip with day separators for each rule. Colored = when the rule is effective.</p>";
+        tlHtml += "<div class=\"dehiyyot-week-rules\">";
+        // A (lo ADU): color Sun(0), Wed(3), Fri(5)
+        tlHtml += "<div class=\"dehiyyot-week-rule-row\"><span class=\"dehiyyot-viz-label\">A</span><div class=\"dehiyyot-week-rule-strip\">";
+        for (let w = 0; w < 7; w++) {
+          const effective = w === 0 || w === 3 || w === 5;
+          tlHtml += "<span class=\"dehiyyot-day-cell" + (effective ? " dehiyyot-effective" : "") + "\" title=\"" + WEEKDAY_LABELS[w] + (effective ? " (rule applies)" : "") + "\">" + WEEKDAY_LABELS[w].slice(0, 1) + "</span>";
+        }
+        tlHtml += "</div></div>";
+        // B (Molad Zaken): last quarter of each day (4 quarters per day)
+        tlHtml += "<div class=\"dehiyyot-week-rule-row\"><span class=\"dehiyyot-viz-label\">B</span><div class=\"dehiyyot-week-rule-strip dehiyyot-quarters\">";
+        for (let w = 0; w < 7; w++) {
+          for (let q = 0; q < 4; q++) {
+            const effective = q === 3;
+            tlHtml += "<span class=\"dehiyyot-quarter" + (effective ? " dehiyyot-effective" : "") + "\" title=\"" + WEEKDAY_LABELS[w] + " " + (q + 1) + "/4" + (effective ? " (rule applies)" : "") + "\"></span>";
+          }
+          if (w < 6) tlHtml += "<span class=\"dehiyyot-day-sep\"></span>";
+        }
+        tlHtml += "</div></div>";
+        // C (BeTU'TeKPaT): Monday from 15h589p — effective = (day - 15h589p) / day (relative length)
+        const DAY_CHALAKIM = 24 * 1080;
+        const C_EFFECTIVE_PCT = ((DAY_CHALAKIM - (15 * 1080 + 589)) / DAY_CHALAKIM) * 100;
+        const C_INACTIVE_PCT = 100 - C_EFFECTIVE_PCT;
+        const D_EFFECTIVE_PCT = ((DAY_CHALAKIM - (9 * 1080 + 204)) / DAY_CHALAKIM) * 100;
+        const D_INACTIVE_PCT = 100 - D_EFFECTIVE_PCT;
+        tlHtml += "<div class=\"dehiyyot-week-rule-row\"><span class=\"dehiyyot-viz-label\">C</span><div class=\"dehiyyot-week-rule-strip dehiyyot-day-parts\">";
+        for (let w = 0; w < 7; w++) {
+          tlHtml += "<div class=\"dehiyyot-day-slot\">";
+          const isMonday = w === 1;
+          if (isMonday) {
+            tlHtml += "<span class=\"dehiyyot-day-part dehiyyot-day-part-inactive\" style=\"width:" + C_INACTIVE_PCT + "%\" title=\"Monday before 15h589p\"></span>";
+            tlHtml += "<span class=\"dehiyyot-day-part dehiyyot-effective\" style=\"width:" + C_EFFECTIVE_PCT + "%\" title=\"Monday from 15h589p (rule applies)\"></span>";
+          } else {
+            tlHtml += "<span class=\"dehiyyot-day-part\" style=\"width:100%\" title=\"" + WEEKDAY_LABELS[w] + "\"></span>";
+          }
+          tlHtml += "</div>";
+          if (w < 6) tlHtml += "<span class=\"dehiyyot-day-sep\"></span>";
+        }
+        tlHtml += "</div></div>";
+        // D (GaTRaD): Tuesday from 9h204p — effective = (day - 9h204p) / day
+        tlHtml += "<div class=\"dehiyyot-week-rule-row\"><span class=\"dehiyyot-viz-label\">D</span><div class=\"dehiyyot-week-rule-strip dehiyyot-day-parts\">";
+        for (let w = 0; w < 7; w++) {
+          tlHtml += "<div class=\"dehiyyot-day-slot\">";
+          const isTuesday = w === 2;
+          if (isTuesday) {
+            tlHtml += "<span class=\"dehiyyot-day-part dehiyyot-day-part-inactive\" style=\"width:" + D_INACTIVE_PCT + "%\" title=\"Tuesday before 9h204p\"></span>";
+            tlHtml += "<span class=\"dehiyyot-day-part dehiyyot-effective\" style=\"width:" + D_EFFECTIVE_PCT + "%\" title=\"Tuesday from 9h204p (rule applies)\"></span>";
+          } else {
+            tlHtml += "<span class=\"dehiyyot-day-part\" style=\"width:100%\" title=\"" + WEEKDAY_LABELS[w] + "\"></span>";
+          }
+          tlHtml += "</div>";
+          if (w < 6) tlHtml += "<span class=\"dehiyyot-day-sep\"></span>";
+        }
+        tlHtml += "</div></div>";
+        tlHtml += "</div>";
+        dehiyyotTimeline.innerHTML = tlHtml;
+      });
+    }
+
+    /** Jump calendar to Tishrei 1 of the given Hebrew year and scroll to calendar. */
+    function jumpToTishrei1(hebrewYear) {
+      const core = HebrewCore();
+      if (!core || !monthSelect || !yearInput) return;
+      const d = core.tishrei1Date(hebrewYear);
+      const gYear = d.getUTCFullYear();
+      const gMonth = d.getUTCMonth();
+      monthSelect.value = String(gMonth);
+      yearInput.value = String(gYear);
+      if (hebYearInput) hebYearInput.value = String(hebrewYear);
+      if (hebMonthSelect) {
+        global.View.populateHebrewMonthSelector(hebMonthSelect, hebrewYear);
+        hebMonthSelect.value = "Tishrey";
+      }
+      renderCurrent();
+      var calendarSection = document.querySelector(".calendars");
+      if (calendarSection) {
+        calendarSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+
+    // Click on year cell in dehiyyot viz → jump calendar to Tishrei 1 of that year (document-level delegation)
+    document.addEventListener("click", function (e) {
+      var cell = e.target && e.target.closest ? e.target.closest(".dehiyyot-year-cell") : null;
+      if (!cell) return;
+      var y = cell.getAttribute("data-year");
+      if (y == null || y === "") return;
+      var hy = parseInt(y, 10);
+      if (!Number.isFinite(hy)) return;
+      jumpToTishrei1(hy);
+    });
 
     /* ================ Holiday Line Graph logic =================== */
 

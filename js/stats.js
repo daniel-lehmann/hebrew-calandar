@@ -433,6 +433,72 @@
     };
   }
 
+  /**
+   * Dehiyyot (postponement rules) stats for the Stats tab.
+   * @param {number} [numYears=1000] - How many years ago to analyze (ending at endYear).
+   * @returns {{ rules: Object, timeline: Array, endYear: number }|null}
+   */
+  function dehiyyotStatsData(numYears) {
+    const core = HebrewCore();
+    if (!core || !core.tishrei1Dehiyyot) return null;
+
+    const endYear = 5786;
+    const n = Math.max(1, Math.min(4000, Number(numYears) || 1000));
+    const startYear = Math.max(1, endYear - n + 1);
+    const totalYears = endYear - startYear + 1;
+
+    const ruleKeys = ["A", "B", "C", "D"];
+    const counts = { A: 0, B: 0, C: 0, D: 0 };
+    const lastUsed = { A: null, B: null, C: null, D: null };
+    const timeline = [];
+
+    for (let hy = startYear; hy <= endYear; hy++) {
+      const info = core.tishrei1Dehiyyot(hy);
+      timeline.push({
+        year: hy,
+        weekday: info.weekday,
+        rules: info.rules,
+        dateStr: info.date.toISOString().slice(0, 10),
+      });
+      ruleKeys.forEach((k) => {
+        if (info.rules[k]) {
+          counts[k]++;
+          lastUsed[k] = hy;
+        }
+      });
+    }
+
+    // Next time each rule will be used (first year after endYear)
+    const nextUsed = { A: null, B: null, C: null, D: null };
+    const lookAhead = 500;
+    for (let hy = endYear + 1; hy <= endYear + lookAhead; hy++) {
+      const info = core.tishrei1Dehiyyot(hy);
+      ruleKeys.forEach((k) => {
+        if (nextUsed[k] == null && info.rules[k]) nextUsed[k] = hy;
+      });
+      if (ruleKeys.every((k) => nextUsed[k] != null)) break;
+    }
+
+    const rules = {};
+    ruleKeys.forEach((k) => {
+      const count = counts[k];
+      rules[k] = {
+        count,
+        percent: totalYears ? ((100 * count) / totalYears).toFixed(1) : "0",
+        lastUsed: lastUsed[k],
+        nextUsed: nextUsed[k],
+      };
+    });
+
+    return {
+      rules,
+      timeline,
+      startYear,
+      endYear,
+      totalYears,
+    };
+  }
+
   const Stats = {
     summarizeEarliestPesach,
     listTishrei1Years,
@@ -443,6 +509,7 @@
     holidayDateGraph,
     holidayDateSeries,
     listHebrewDateYears,
+    dehiyyotStatsData,
   };
 
   if (typeof module !== "undefined" && module.exports) {

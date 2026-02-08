@@ -99,6 +99,24 @@
     return EPOCH_DAY_MS + dayOff * DAY_MS + civilHourOffset * 60 * 60 * 1000;
   }
 
+  /**
+   * Return molad of Tishrei for the given Hebrew year: civil date, weekday, hour, chalakim.
+   * Used to show molad time on the calendar (day of molad and on Tishrei 1 when different).
+   * @param {number} year - Hebrew year
+   * @returns {{ date: Date, weekday: number, hour: number, chalakim: number }}
+   */
+  function getMoladTishrei(year) {
+    var months = monthsBetweenYears(EPOCH_YEAR, year);
+    var total  = EPOCH_TIME_CHALAKIM + months * LUNATION_CHALAKIM;
+    var dayOff = Math.floor(total / DAY_CHALAKIM);
+    var timeCh = total - dayOff * DAY_CHALAKIM;       // 0..DAY_CHALAKIM-1
+    var weekday = ((EPOCH_WEEKDAY + dayOff) % 7 + 7) % 7;
+    var hour = Math.floor(timeCh / HOUR_CHALAKIM);     // 0..23 Hebrew hour
+    var chalakim = timeCh % HOUR_CHALAKIM;             // 0..1079
+    var date = new Date(moladTishreyMs(year));
+    return { date, weekday, hour, chalakim };
+  }
+
   function tishrei1Date(year) {
     var months = monthsBetweenYears(EPOCH_YEAR, year);
 
@@ -146,6 +164,58 @@
     // Each Hebrew-day offset = one civil-day offset (both are 24 h).
     var tishreiMs = EPOCH_DAY_MS + (dayOff + postpone) * DAY_MS;
     return new Date(tishreiMs);
+  }
+
+  /**
+   * Return Tishrei 1 date and which postponement rules (dehiyyot) were applied.
+   * @param {number} year - Hebrew year
+   * @returns {{ date: Date, weekday: number, rules: { A: boolean, B: boolean, C: boolean, D: boolean } }}
+   */
+  function tishrei1Dehiyyot(year) {
+    var months = monthsBetweenYears(EPOCH_YEAR, year);
+    var total  = EPOCH_TIME_CHALAKIM + months * LUNATION_CHALAKIM;
+    var dayOff = Math.floor(total / DAY_CHALAKIM);
+    var timeCh = total - dayOff * DAY_CHALAKIM;
+
+    var moladWeekday = ((EPOCH_WEEKDAY + dayOff) % 7 + 7) % 7;
+    var postpone = 0;
+    var ruleB = false, ruleC = false, ruleD = false;
+
+    if (timeCh >= MOLAD_ZAKEN) {
+      postpone = 1;
+      ruleB = true;
+    } else if (moladWeekday === 1 &&
+               isLeapYearHebrew(year - 1) &&
+               timeCh >= BETUTEKPAT) {
+      postpone = 1;
+      ruleC = true;
+    } else if (moladWeekday === 2 &&
+               !isLeapYearHebrew(year) &&
+               timeCh >= GATRAD) {
+      postpone = 1;
+      ruleD = true;
+    }
+
+    var wd = ((moladWeekday + postpone) % 7 + 7) % 7;
+    var ruleADays = 0;
+    while (wd === 0 || wd === 3 || wd === 5) {
+      postpone += 1;
+      ruleADays += 1;
+      wd = ((moladWeekday + postpone) % 7 + 7) % 7;
+    }
+
+    var tishreiMs = EPOCH_DAY_MS + (dayOff + postpone) * DAY_MS;
+    var date = new Date(tishreiMs);
+    return {
+      date,
+      weekday: date.getUTCDay(),
+      rules: {
+        A: ruleADays > 0,
+        B: ruleB,
+        C: ruleC,
+        D: ruleD,
+      },
+    };
   }
 
   function absoluteFromDate(date) {
@@ -272,7 +342,9 @@
     HEBREW_HOLIDAYS,
     isLeapYearHebrew,
     moladTishreyMs,
+    getMoladTishrei,
     tishrei1Date,
+    tishrei1Dehiyyot,
     hebrewYearLength,
     yearMonths,
     absoluteFromGregorian,

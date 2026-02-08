@@ -57,6 +57,7 @@
             <button id="btn-tishrei-list" class="stat-btn">List Hebrew date by year</button>
             <button id="btn-tishrei-hist" class="stat-btn">Day-of-week histogram</button>
             <button id="btn-holiday-graph-toggle" class="stat-btn">Holiday line graph</button>
+            <button id="btn-dehiyyot-stats" class="stat-btn">Dehiyyot (postponement) stats</button>
           </div>
 
           <!-- Panel: Day-of-week histogram -->
@@ -111,6 +112,17 @@
               <div id="cycle-checkboxes" class="cycle-checkboxes"></div>
               <button id="btn-cycle-graph">Show cycle graph</button>
             </div>
+          </div>
+
+          <!-- Panel: Dehiyyot stats -->
+          <div class="stats-panel" id="panel-dehiyyot" style="display:none;">
+            <div class="stats-controls">
+              <label for="dehiyyot-years-input">Years to analyze (how many years ago)</label>
+              <input id="dehiyyot-years-input" type="number" min="1" max="4000" value="1000" />
+              <button id="btn-dehiyyot-run">Run</button>
+            </div>
+            <div id="dehiyyot-results" class="dehiyyot-results"></div>
+            <div id="dehiyyot-timeline" class="dehiyyot-timeline"></div>
           </div>
 
           <!-- Charts -->
