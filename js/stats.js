@@ -393,6 +393,12 @@
     return lines.join("\n");
   }
 
+  /** Day-of-year 1–365 with February always 28 days (for holiday graph scale). */
+  function simplifiedDayOfYear(monthIndex, day) {
+    const monthStarts = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+    return monthStarts[monthIndex] + day;
+  }
+
   function holidayDateSeries(holidayName, countYears) {
     const core = HebrewCore();
     if (!core) return null;
@@ -415,11 +421,8 @@
 
     for (let hy = startYear; hy <= endYear; hy++) {
       const g = core.gregorianFromHebrew(hy, holiday.month, holiday.startDay);
-      const doy =
-        core.absoluteFromGregorian(g.year, g.monthIndex, g.day) -
-        core.absoluteFromGregorian(g.year, 0, 1);
       years.push(hy);
-      dayOfYear.push(doy + 1); // 1-based day-of-year
+      dayOfYear.push(simplifiedDayOfYear(g.monthIndex, g.day)); // 1–365, Feb = 28 days
       gregDates.push(g.date.toISOString().slice(0, 10));
       weekdays.push(weekdayNames[g.weekday]);
     }

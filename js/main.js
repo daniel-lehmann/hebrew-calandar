@@ -844,81 +844,108 @@
           yearRangeSlider.value = String(total - windowSize); // default to latest
         }
 
-        const updateHolidayChart = () => {
-          let startIdx = 0;
-          if (needsSlider && yearRangeSlider) {
-            startIdx = Number(yearRangeSlider.value) || 0;
-          }
-          if (startIdx < 0) startIdx = 0;
-          const endIdx = Math.min(startIdx + windowSize, total);
-
-          const labels = series.years.slice(startIdx, endIdx);
-          const data = series.dayOfYear.slice(startIdx, endIdx);
-          const dates = series.gregDates.slice(startIdx, endIdx);
-          const days = series.weekdays.slice(startIdx, endIdx);
-
-          if (yearRangeLabel && labels.length) {
-            yearRangeLabel.textContent =
-              "Showing " + labels[0] + " – " + labels[labels.length - 1] +
-              " (" + labels.length + " of " + total + " years)";
-          } else if (yearRangeLabel) {
-            yearRangeLabel.textContent =
-              total + " years (all visible)";
+        // Convert simplified day-of-year (1–365, Feb=28) to "d.m" label (e.g. 3.3 = 3 March)
+          function simplifiedDayToDotted(value) {
+            var monthStarts = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+            var monthLengths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            for (var m = 0; m < 12; m++) {
+              if (value <= monthStarts[m] + monthLengths[m]) {
+                var d = value - monthStarts[m];
+                return d + "." + (m + 1);
+              }
+            }
+            return String(value);
           }
 
-          const ctx = holidayLineCanvas.getContext("2d");
-          if (holidayLineChart) holidayLineChart.destroy();
+          const updateHolidayChart = () => {
+            let startIdx = 0;
+            if (needsSlider && yearRangeSlider) {
+              startIdx = Number(yearRangeSlider.value) || 0;
+            }
+            if (startIdx < 0) startIdx = 0;
+            const endIdx = Math.min(startIdx + windowSize, total);
 
-          holidayLineChart = new Chart(ctx, {
-            type: "line",
-            data: {
-              labels: labels,
-              datasets: [
-                {
-                  label: series.holidayName + " – Gregorian day-of-year",
-                  data: data,
-                  borderColor: "rgba(34, 197, 94, 1)",
-                  backgroundColor: "rgba(34, 197, 94, 0.25)",
-                  tension: 0.1,
-                  pointRadius: windowSize <= 40 ? 3 : 0,
-                },
-              ],
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              scales: {
-                x: {
-                  title: { display: true, text: "Hebrew Year", color: "#e5e7eb" },
-                  ticks: { color: "#e5e7eb", maxTicksLimit: 15 },
-                  grid: { color: "rgba(31, 41, 55, 0.5)" },
-                },
-                y: {
-                  title: { display: true, text: "Gregorian day-of-year", color: "#e5e7eb" },
-                  ticks: { color: "#e5e7eb" },
-                  grid: { color: "rgba(31, 41, 55, 0.5)" },
-                },
+            const labels = series.years.slice(startIdx, endIdx);
+            const data = series.dayOfYear.slice(startIdx, endIdx);
+            const dates = series.gregDates.slice(startIdx, endIdx);
+            const days = series.weekdays.slice(startIdx, endIdx);
+
+            var dataMin = data.length ? Math.min.apply(null, data) : 1;
+            var dataMax = data.length ? Math.max.apply(null, data) : 365;
+            var padding = Math.max(7, Math.ceil((dataMax - dataMin) * 0.1));
+            var yMin = Math.max(1, dataMin - padding);
+            var yMax = Math.min(365, dataMax + padding);
+
+            if (yearRangeLabel && labels.length) {
+              yearRangeLabel.textContent =
+                "Showing " + labels[0] + " – " + labels[labels.length - 1] +
+                " (" + labels.length + " of " + total + " years)";
+            } else if (yearRangeLabel) {
+              yearRangeLabel.textContent =
+                total + " years (all visible)";
+            }
+
+            const ctx = holidayLineCanvas.getContext("2d");
+            if (holidayLineChart) holidayLineChart.destroy();
+
+            holidayLineChart = new Chart(ctx, {
+              type: "line",
+              data: {
+                labels: labels,
+                datasets: [
+                  {
+                    label: series.holidayName + " (date d.m)",
+                    data: data,
+                    borderColor: "rgba(34, 197, 94, 1)",
+                    backgroundColor: "rgba(34, 197, 94, 0.25)",
+                    tension: 0.1,
+                    pointRadius: windowSize <= 40 ? 3 : 0,
+                  },
+                ],
               },
-              plugins: {
-                legend: { labels: { color: "#e5e7eb" } },
-                tooltip: {
-                  callbacks: {
-                    title: function (items) {
-                      if (!items.length) return "";
-                      return "Hebrew year " + items[0].label;
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                  x: {
+                    title: { display: true, text: "Hebrew Year", color: "#e5e7eb" },
+                    ticks: { color: "#e5e7eb", maxTicksLimit: 15 },
+                    grid: { color: "rgba(31, 41, 55, 0.5)" },
+                  },
+                  y: {
+                    title: { display: true, text: "Date (d.m)", color: "#e5e7eb" },
+                    min: yMin,
+                    max: yMax,
+                    ticks: {
+                      color: "#e5e7eb",
+                      callback: function (value) {
+                        return simplifiedDayToDotted(value);
+                      },
                     },
-                    label: function (context) {
-                      var i = context.dataIndex;
-                      var d = dates[i] || "";
-                      var wd = days[i] || "";
-                      return d + " (" + wd + ")";
+                    grid: { color: "rgba(31, 41, 55, 0.5)" },
+                  },
+                },
+                plugins: {
+                  legend: { labels: { color: "#e5e7eb" } },
+                  tooltip: {
+                    callbacks: {
+                      title: function (items) {
+                        if (!items.length) return "";
+                        return "Hebrew year " + items[0].label;
+                      },
+                      label: function (context) {
+                        var i = context.dataIndex;
+                        var dotted = simplifiedDayToDotted(context.parsed.y);
+                        var d = dates[i] || "";
+                        var wd = days[i] || "";
+                        return dotted + " — " + d + " (" + wd + ")";
+                      },
                     },
                   },
                 },
               },
-            },
-          });
-        };
+            });
+          };
 
         updateHolidayChart();
 
@@ -966,6 +993,18 @@
         if (holidayRangeControls) holidayRangeControls.style.display = "none";
         if (holidayChartWrapper) holidayChartWrapper.style.display = "block";
 
+        function cycleDayToDotted(value) {
+          var monthStarts = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+          var monthLengths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+          for (var m = 0; m < 12; m++) {
+            if (value <= monthStarts[m] + monthLengths[m]) {
+              var d = value - monthStarts[m];
+              return d + "." + (m + 1);
+            }
+          }
+          return String(value);
+        }
+
         // Build one dataset per checked cycle position
         var datasets = checked.map(function (cyclePos) {
           var data = [];
@@ -984,6 +1023,13 @@
             spanGaps: true,
           };
         });
+
+        var cycleDayValues = series.dayOfYear.filter(function (v) { return v != null; });
+        var dataMin = cycleDayValues.length ? Math.min.apply(null, cycleDayValues) : 1;
+        var dataMax = cycleDayValues.length ? Math.max.apply(null, cycleDayValues) : 365;
+        var padding = Math.max(7, Math.ceil((dataMax - dataMin) * 0.1));
+        var yMin = Math.max(1, dataMin - padding);
+        var yMax = Math.min(365, dataMax + padding);
 
         var ctx = holidayLineCanvas.getContext("2d");
         if (holidayLineChart) holidayLineChart.destroy();
@@ -1004,12 +1050,15 @@
                 grid: { color: "rgba(31, 41, 55, 0.5)" },
               },
               y: {
-                title: {
-                  display: true,
-                  text: "Gregorian day-of-year",
+                title: { display: true, text: "Date (d.m)", color: "#e5e7eb" },
+                min: yMin,
+                max: yMax,
+                ticks: {
                   color: "#e5e7eb",
+                  callback: function (value) {
+                    return cycleDayToDotted(value);
+                  },
                 },
-                ticks: { color: "#e5e7eb" },
                 grid: { color: "rgba(31, 41, 55, 0.5)" },
               },
             },
@@ -1023,12 +1072,11 @@
                   },
                   label: function (context) {
                     var idx = context.dataIndex;
+                    var dotted = context.parsed.y != null ? cycleDayToDotted(context.parsed.y) : "";
                     var d = series.gregDates[idx] || "";
                     var wd = series.weekdays[idx] || "";
                     var cyc = ((series.years[idx] - 1) % 19) + 1;
-                    return (
-                      "Cycle " + cyc + ": " + d + " (" + wd + ")"
-                    );
+                    return "Cycle " + cyc + ": " + dotted + " — " + d + " (" + wd + ")";
                   },
                 },
               },
