@@ -872,8 +872,8 @@
 
             var dataMin = data.length ? Math.min.apply(null, data) : 1;
             var dataMax = data.length ? Math.max.apply(null, data) : 365;
-            var yMin = Math.max(1, dataMin - 3);
-            var yMax = Math.min(365, dataMax + 3);
+            var yMin = dataMin - 3;
+            var yMax = dataMax + 3;
 
             if (yearRangeLabel && labels.length) {
               yearRangeLabel.textContent =
@@ -1023,11 +1023,17 @@
           };
         });
 
-        var cycleDayValues = series.dayOfYear.filter(function (v) { return v != null; });
-        var dataMin = cycleDayValues.length ? Math.min.apply(null, cycleDayValues) : 1;
-        var dataMax = cycleDayValues.length ? Math.max.apply(null, cycleDayValues) : 365;
-        var yMin = Math.max(1, dataMin - 3);
-        var yMax = Math.min(365, dataMax + 3);
+        // Min/max from displayed values only (non-null across all built datasets)
+        var allDisplayed = [];
+        datasets.forEach(function (ds) {
+          (ds.data || []).forEach(function (v) {
+            if (v != null) allDisplayed.push(v);
+          });
+        });
+        var dataMin = allDisplayed.length ? Math.min.apply(null, allDisplayed) : 1;
+        var dataMax = allDisplayed.length ? Math.max.apply(null, allDisplayed) : 365;
+        var yMin = dataMin - 3;
+        var yMax = dataMax + 3;
 
         var ctx = holidayLineCanvas.getContext("2d");
         if (holidayLineChart) holidayLineChart.destroy();
