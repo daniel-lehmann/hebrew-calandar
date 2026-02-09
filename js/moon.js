@@ -20,6 +20,15 @@
 
   // Hebrew month length: 29d 12h 793 parts = 765433/1080 hours = 765433/25920 days
   const HEBREW_MONTH_DAYS = 765433 / 25920;
+  // Mean synodic month (astronomical, ~J2000) for drift: 29.530588853 days (Meeus / almanac)
+  const MEAN_SYNODIC_MONTH_DAYS = 29.530588853;
+
+  // 29d 12h 793h (molad) is calculated at Jerusalem time (average midday = 12:00).
+  // Jerusalem local mean time from longitude: offset hours = (longitude_deg / 360) * 24.
+  // Jerusalem ~35°E, so UTC offset = (35/360)*24 hours (Jerusalem ahead of UTC).
+  const JERUSALEM_LONGITUDE_DEGREES = 35;
+  const JERUSALEM_UTC_OFFSET_HOURS = (JERUSALEM_LONGITUDE_DEGREES / 360) * 24;
+  const JERUSALEM_UTC_OFFSET_DAYS = JERUSALEM_UTC_OFFSET_HOURS / 24;
 
   /**
    * Mean new moon time for lunation N (UT).
@@ -32,6 +41,42 @@
     var dTT = NEW_MOON_D0_TT + LUNATION_DAYS * N + NEW_MOON_Q_TT * N * N;
     var dUT = -UT_OFFSET - UT_Q * N * N;
     return JD_2000_UT + dTT + dUT;
+  }
+
+  /**
+   * True new moon time for lunation N (UT), with main Meeus Ch.49 periodic corrections.
+   * Adds variation from mean (~±14h) so the graph vs 29d 12h 793h is not a straight line.
+   * @param {number} N - lunation number (integer)
+   * @returns {number} Julian Date (UT)
+   */
+  function trueNewMoonJD(N) {
+    N = Number(N) || 0;
+    var jdMean = newMoonJD(N);
+    var k = N;
+    var T = k / 1236.85;
+    var M = (2.5534 + 29.10535670 * k - 0.0000014 * T * T) % 360;
+    var Mprime = (201.5643 + 385.81693528 * k - 0.0107582 * T * T - 0.00001238 * T * T * T) % 360;
+    var F = (160.7108 + 390.67050274 * k - 0.0016118 * T * T - 0.00000227 * T * T * T) % 360;
+    var E = 1 - 0.002516 * T - 0.0000074 * T * T;
+    var rad = Math.PI / 180;
+    var M_ = M * rad;
+    var Mp_ = Mprime * rad;
+    var F_ = F * rad;
+    var correction = 0;
+    correction -= 0.40720 * Math.sin(Mp_);
+    correction += 0.17241 * E * Math.sin(M_);
+    correction += 0.01608 * Math.sin(2 * Mp_);
+    correction += 0.01039 * Math.sin(2 * F_);
+    correction += 0.00739 * E * Math.sin(Mp_ - M_);
+    correction -= 0.00514 * E * Math.sin(Mp_ + M_);
+    correction += 0.00208 * E * E * Math.sin(2 * M_);
+    correction -= 0.00111 * Math.sin(Mp_ - 2 * F_);
+    correction -= 0.00057 * Math.sin(Mp_ + 2 * F_);
+    correction += 0.00056 * E * Math.sin(2 * Mp_ + M_);
+    correction -= 0.00042 * Math.sin(2 * Mp_ + 2 * F_);
+    correction += 0.00038 * E * Math.sin(Mp_ - 2 * M_);
+    correction -= 0.00024 * E * Math.sin(Mp_ + 2 * M_);
+    return jdMean + correction;
   }
 
   /**
@@ -109,16 +154,20 @@
   }
 
   /**
-   * For graph: actual new moon JD minus definition (29d 12h 793h from same epoch at N=0).
-   * Y = (actual_JD(N) - definition_JD(N)) * 24  in hours.
-   * definition_JD(N) = newMoonJD(0) + N * HEBREW_MONTH_DAYS.
+   * For graph: true new moon JD (UT) minus definition (29d 12h 793h in UTC).
+   * The 29d 12h 793h progression is in Jerusalem time (average midday = 12:00);
+   * convert to UTC by subtracting Jerusalem offset (Jerusalem = UTC+2).
+   * Y = (true_new_moon_UT(N) - definition_UTC(N)) * 24  in hours.
+   * definition_Jerusalem(N) = trueNewMoonJD(0) + N * HEBREW_MONTH_DAYS;
+   * definition_UTC(N) = definition_Jerusalem(N) - JERUSALEM_UTC_OFFSET_DAYS.
    * @param {number} N - lunation number
    * @returns {{ jd: number, definitionJD: number, hoursLater: number }}
    */
   function newMoonVsDefinition(N) {
-    var jd = newMoonJD(N);
-    var definitionEpoch = newMoonJD(0);
-    var definitionJD = definitionEpoch + N * HEBREW_MONTH_DAYS;
+    var jd = trueNewMoonJD(N);
+    var definitionEpoch = trueNewMoonJD(0);
+    var definitionJerusalem = definitionEpoch + N * HEBREW_MONTH_DAYS;
+    var definitionJD = definitionJerusalem - JERUSALEM_UTC_OFFSET_DAYS;
     var hoursLater = (jd - definitionJD) * 24;
     return { jd, definitionJD, hoursLater };
   }
@@ -155,8 +204,12 @@
     return { lunations, hoursLater, labels };
   }
 
+  /** Lunations per Julian year (365.25 days). */
+  var LUNATIONS_PER_YEAR = 365.25 / LUNATION_DAYS;
+
   const Moon = {
     newMoonJD,
+    trueNewMoonJD,
     fullMoonJD,
     jdToDate,
     dateToJD,
@@ -169,6 +222,8 @@
     JD_2000_UT,
     LUNATION_DAYS,
     HEBREW_MONTH_DAYS,
+    MEAN_SYNODIC_MONTH_DAYS,
+    LUNATIONS_PER_YEAR,
   };
 
   if (typeof module !== "undefined" && module.exports) {

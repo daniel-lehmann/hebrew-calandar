@@ -118,16 +118,12 @@
           <!-- Panel: New moon vs 29d 12h 793h -->
           <div class="stats-panel" id="panel-moon-graph" style="display:none;">
             <div class="stats-controls">
-              <label for="moon-start-month">Start month (lunation)</label>
-              <input id="moon-start-month" type="number" min="-500" max="500" />
-              <label for="moon-end-month">End month (lunation)</label>
-              <input id="moon-end-month" type="number" min="-500" max="500" />
-              <button id="btn-moon-graph">Show graph</button>
-            </div>
-            <div class="stats-controls" id="moon-range-controls" style="display:none;">
-              <label for="moon-range-slider">Scroll month window</label>
-              <input id="moon-range-slider" type="range" />
-              <span id="moon-range-label"></span>
+              <label for="moon-lines-only-cb">Lines only</label>
+              <input id="moon-lines-only-cb" type="checkbox" title="Show only the two mean lines (default 2000 years)" />
+              <label for="moon-years-input">Last</label>
+              <input id="moon-years-input" type="number" min="1" max="30" value="30" style="width:4em;" />
+              <input id="moon-years-slider" type="range" min="1" max="30" value="30" />
+              <label>years</label>
             </div>
           </div>
 
@@ -151,6 +147,7 @@
               <canvas id="tishrei-hist-chart"></canvas>
             </div>
             <div class="chart-wrapper" id="moon-chart-wrapper" style="display:none;">
+              <div id="moon-chart-month-lengths" class="moon-chart-month-lengths"></div>
               <canvas id="moon-line-chart"></canvas>
             </div>
           </div>

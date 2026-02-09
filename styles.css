@@ -278,6 +278,13 @@ button:active {
   display: block;
 }
 
+.moon-chart-month-lengths {
+  color: #e5e7eb;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+  padding: 0 0.25rem;
+}
+
 .cycle-checkboxes {
   display: flex;
   flex-wrap: wrap;

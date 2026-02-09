@@ -8,8 +8,10 @@
   let moonLineChart = null;
   const DEFAULT_GRAPH_YEARS = 50;
   const MAX_VISIBLE_POINTS = 50; // points shown at once; slider if total > this
-  const MOON_GRAPH_DEFAULT_MONTHS = 50;
-  const MOON_GRAPH_MAX_VISIBLE = 80;
+  const MOON_GRAPH_DEFAULT_YEARS = 30;
+  const MOON_GRAPH_FULL_DISPLAY_MAX_YEARS = 30;
+  const MOON_GRAPH_LINES_ONLY_DEFAULT_YEARS = 2000;
+  const MOON_GRAPH_LINES_ONLY_POINTS = 50;
 
   function hebrewDateFromGregorian(gYear, gMonthIndex, gDay) {
     const core = HebrewCore();
@@ -100,13 +102,11 @@
     /* --- Moon graph panel --- */
     const btnMoonGraphToggle = document.getElementById("btn-moon-graph-toggle");
     const panelMoonGraph = document.getElementById("panel-moon-graph");
-    const moonStartMonthInput = document.getElementById("moon-start-month");
-    const moonEndMonthInput = document.getElementById("moon-end-month");
-    const btnMoonGraph = document.getElementById("btn-moon-graph");
-    const moonRangeControls = document.getElementById("moon-range-controls");
-    const moonRangeSlider = document.getElementById("moon-range-slider");
-    const moonRangeLabel = document.getElementById("moon-range-label");
+    const moonLinesOnlyCb = document.getElementById("moon-lines-only-cb");
+    const moonYearsInput = document.getElementById("moon-years-input");
+    const moonYearsSlider = document.getElementById("moon-years-slider");
     const moonChartWrapper = document.getElementById("moon-chart-wrapper");
+    const moonChartMonthLengthsEl = document.getElementById("moon-chart-month-lengths");
     const moonLineCanvas = document.getElementById("moon-line-chart");
 
     /* --- Dehiyyot stats panel --- */
@@ -506,6 +506,7 @@
       statsOutput.textContent = "";
       if (holidayChartWrapper) holidayChartWrapper.style.display = "none";
       if (tishreiChartWrapper) tishreiChartWrapper.style.display = "none";
+      if (moonChartWrapper) moonChartWrapper.style.display = "none";
     }
 
     if (btnStatsBack) {
@@ -560,6 +561,7 @@
     // "List Hebrew date by year" — toggle its panel and show data for current selection
     btnTishreiList.addEventListener("click", () => {
       activateStat(btnTishreiList);
+      if (moonChartWrapper) moonChartWrapper.style.display = "none";
       togglePanel("panel-tishrei-list");
       runListStat();
     });
@@ -650,6 +652,7 @@
     // "Day-of-week histogram" — toggle its panel and show data for current selection
     btnTishreiHist.addEventListener("click", () => {
       activateStat(btnTishreiHist);
+      if (moonChartWrapper) moonChartWrapper.style.display = "none";
       togglePanel("panel-hist");
       runHistStat();
     });
@@ -671,17 +674,19 @@
     if (btnHolidayGraphToggle) {
       btnHolidayGraphToggle.addEventListener("click", () => {
         activateStat(btnHolidayGraphToggle);
+        if (moonChartWrapper) moonChartWrapper.style.display = "none";
         togglePanel("panel-holiday-graph");
         if (btnHolidayGraph) btnHolidayGraph.click();
       });
     }
 
+    let runMoonGraphRef = null;
     // "New moon vs 29d 12h 793h" — toggle panel and show graph
     if (btnMoonGraphToggle) {
       btnMoonGraphToggle.addEventListener("click", () => {
         activateStat(btnMoonGraphToggle);
         togglePanel("panel-moon-graph");
-        if (btnMoonGraph) btnMoonGraph.click();
+        if (runMoonGraphRef) setTimeout(runMoonGraphRef, 0);
       });
     }
 
@@ -689,6 +694,7 @@
     if (btnDehiyyotStats) {
       btnDehiyyotStats.addEventListener("click", () => {
         activateStat(btnDehiyyotStats);
+        if (moonChartWrapper) moonChartWrapper.style.display = "none";
         togglePanel("panel-dehiyyot");
         if (btnDehiyyotRun) btnDehiyyotRun.click();
       });
@@ -1116,26 +1122,139 @@
 
     /* ================ New moon vs 29d 12h 793h graph ================ */
 
-    if (btnMoonGraph && moonLineCanvas && typeof global.Moon !== "undefined") {
+    if (moonLineCanvas && typeof global.Moon !== "undefined") {
       const Moon = global.Moon;
       let moonSeries = null;
-      let moonWindowSize = MOON_GRAPH_MAX_VISIBLE;
+      let moonYearsBeforeLinesOnly = MOON_GRAPH_DEFAULT_YEARS;
+
+      /** Format days as "D H:MM:SS.s" (seconds one decimal). */
+      function daysToDHMS(days) {
+        var D = Math.floor(days);
+        var hRem = (days - D) * 24;
+        var H = Math.floor(hRem);
+        var mRem = (hRem - H) * 60;
+        var M = Math.floor(mRem);
+        var S = (mRem - M) * 60;
+        var pad2 = function (n) { return (n < 10 ? "0" : "") + n; };
+        var sInt = Math.floor(S);
+        var sFrac = (S - sInt).toFixed(1);
+        var sTenth = sFrac.length > 2 ? sFrac.charAt(sFrac.length - 1) : "0";
+        return D + " " + pad2(H) + ":" + pad2(M) + ":" + pad2(sInt) + "." + sTenth;
+      }
+
+      function hebrewLabelForLunation(N) {
+        const core = HebrewCore();
+        if (!core) return String(N);
+        const jd = Moon.trueNewMoonJD(N);
+        const d = Moon.jdToDate(jd);
+        const y = d.getUTCFullYear();
+        const m = d.getUTCMonth();
+        const day = d.getUTCDate();
+        try {
+          const h = core.gregorianToHebrew(y, m, day);
+          return h.hebrewMonthName + " " + h.hebrewYear;
+        } catch (e) {
+          return String(N);
+        }
+      }
 
       function updateMoonChart() {
         if (!moonSeries) return;
-        let startIdx = 0;
-        if (moonRangeSlider && moonSeries.lunations.length > moonWindowSize) {
-          const maxStart = moonSeries.lunations.length - moonWindowSize;
-          startIdx = Math.min(Number(moonRangeSlider.value) || 0, maxStart);
-        }
-        const endIdx = Math.min(startIdx + moonWindowSize, moonSeries.lunations.length);
-        const labels = moonSeries.labels.slice(startIdx, endIdx);
-        const data = moonSeries.hoursLater.slice(startIdx, endIdx);
+        const startIdx = 0;
+        const endIdx = moonSeries.lunations.length;
+        const linesOnly = moonLinesOnlyCb && moonLinesOnlyCb.checked;
+        const fullData = moonSeries.hoursLater.slice(startIdx, endIdx);
 
-        if (moonRangeLabel && moonSeries.labels.length) {
-          moonRangeLabel.textContent =
-            "Months " + moonSeries.labels[startIdx] + " – " + moonSeries.labels[endIdx - 1] +
-            " (" + (endIdx - startIdx) + " of " + moonSeries.lunations.length + ")";
+        // Month lengths for header (D H:M S.s)
+        var calculatedMonthDays = Moon.MEAN_SYNODIC_MONTH_DAYS;
+        if (endIdx - startIdx > 1) {
+          var firstJD = Moon.trueNewMoonJD(moonSeries.lunations[startIdx]);
+          var lastJD = Moon.trueNewMoonJD(moonSeries.lunations[endIdx - 1]);
+          calculatedMonthDays = (lastJD - firstJD) / (endIdx - startIdx - 1);
+        }
+        var onlineMonthDays = 29.530588853; // mean synodic month (Meeus / almanac, commonly cited)
+        var halachicMonthDays = Moon.HEBREW_MONTH_DAYS;
+        if (moonChartMonthLengthsEl) {
+          moonChartMonthLengthsEl.innerHTML =
+            "Calculated (this range): " + daysToDHMS(calculatedMonthDays) + " &nbsp;|&nbsp; " +
+            "Reference (online): " + daysToDHMS(onlineMonthDays) + " &nbsp;|&nbsp; " +
+            "Halachic (29d 12h 793): " + daysToDHMS(halachicMonthDays);
+        }
+
+        const realAverage = fullData.length
+          ? fullData.reduce(function (a, b) { return a + b; }, 0) / fullData.length
+          : 0;
+
+        var labels = [];
+        var data = fullData;
+        var linesOnlyDefinitionData = null;
+        var linesOnlySlopeText = "";
+        var linesOnlyYAxisTitle = "";
+
+        if (linesOnly && endIdx - startIdx > 1) {
+          var totalLunations = endIdx - startIdx;
+          var refMonthDays = 29.530588853; // reference (online) mean synodic month
+          var sumJD = 0;
+          for (var i = 0; i < totalLunations; i++) {
+            sumJD += Moon.trueNewMoonJD(moonSeries.lunations[startIdx + i]);
+          }
+          var meanJD = sumJD / totalLunations;
+          var epoch = meanJD - refMonthDays * (totalLunations - 1) / 2;
+          var nPoints = Math.min(MOON_GRAPH_LINES_ONLY_POINTS, totalLunations);
+          var step = nPoints > 1 ? (totalLunations - 1) / (nPoints - 1) : 0;
+          var sampleOffsets = [];
+          for (var s = 0; s < nPoints; s++) {
+            sampleOffsets.push(nPoints > 1 ? (s === nPoints - 1 ? totalLunations - 1 : Math.round(s * step)) : 0);
+          }
+          for (var k = 0; k < sampleOffsets.length; k++) {
+            labels.push(hebrewLabelForLunation(moonSeries.lunations[startIdx + sampleOffsets[k]]));
+          }
+          linesOnlyDefinitionData = sampleOffsets.map(function (offset) {
+            var lunationN = moonSeries.lunations[startIdx + offset];
+            var defAt = Moon.newMoonVsDefinition(lunationN);
+            var refJDAt = epoch + offset * refMonthDays;
+            return (defAt.definitionJD - refJDAt) * 24;
+          });
+          var driftPerLunationHours = (Moon.HEBREW_MONTH_DAYS - refMonthDays) * 24;
+          var driftPerMonthSeconds = driftPerLunationHours * 3600;
+          linesOnlySlopeText = "Reference avg: " + refMonthDays.toFixed(9) + " d, epoch chosen so avg diff = 0 | 29d 12h 793 slope: " + driftPerLunationHours.toFixed(4) + " h/lunation (" + driftPerMonthSeconds.toFixed(2) + " s/month)";
+          linesOnlyYAxisTitle = "Hours later than reference average (0)";
+          data = [];
+        } else if (linesOnly) {
+          labels.push(hebrewLabelForLunation(moonSeries.lunations[startIdx]));
+          linesOnlyDefinitionData = [0];
+          data = [];
+        } else {
+          for (var i = startIdx; i < endIdx; i++) {
+            labels.push(hebrewLabelForLunation(moonSeries.lunations[i]));
+          }
+        }
+        const hoursDefinitionAfterAverage = -realAverage;
+
+        function findLocalMaxIndices(arr) {
+          var peaks = [];
+          for (var i = 1; i < arr.length - 1; i++) {
+            if (arr[i] >= arr[i - 1] && arr[i] >= arr[i + 1]) peaks.push(i);
+          }
+          return peaks;
+        }
+
+        var peakLocalIndices = findLocalMaxIndices(data);
+        var peakSubtitle = "";
+        if (peakLocalIndices.length >= 2 && !linesOnly) {
+          var firstPeakIdx = peakLocalIndices[0];
+          var lastPeakIdx = peakLocalIndices[peakLocalIndices.length - 1];
+          var firstPeakLunation = moonSeries.lunations[startIdx + firstPeakIdx];
+          var lastPeakLunation = moonSeries.lunations[startIdx + lastPeakIdx];
+          var jdFirst = Moon.trueNewMoonJD(firstPeakLunation);
+          var jdLast = Moon.trueNewMoonJD(lastPeakLunation);
+          var daysBetween = jdLast - jdFirst;
+          var numOscillations = peakLocalIndices.length - 1;
+          var avgDaysPerOscillation = daysBetween / numOscillations;
+          var avgYearsPerOscillation = avgDaysPerOscillation / 365.25;
+          peakSubtitle = "Peaks: " + peakLocalIndices.length + " | Oscillations: " + numOscillations +
+            " | Span: " + (daysBetween / 365.25).toFixed(1) + " y | Avg peak-to-peak: " +
+            avgDaysPerOscillation.toFixed(1) + " d (" + avgYearsPerOscillation.toFixed(2) + " y)";
         }
 
         const ctx = moonLineCanvas.getContext("2d");
@@ -1145,43 +1264,100 @@
         const yMin = dataMin - 1;
         const yMax = dataMax + 1;
 
+        const n = labels.length;
+        var realAverageLine = Array(n).fill(realAverage);
+        var definitionLine = Array(n).fill(0);
+        if (linesOnly && linesOnlyDefinitionData) {
+          realAverageLine = Array(n).fill(0);
+          definitionLine = linesOnlyDefinitionData;
+        }
+
+        const datasets = [];
+        if (!linesOnly) {
+          datasets.push({
+            label: "Hours later than 29d 12h 793h",
+            data: data,
+            borderColor: "rgba(59, 130, 246, 1)",
+            backgroundColor: "rgba(59, 130, 246, 0.2)",
+            tension: 0.1,
+            pointRadius: 5,
+            pointHoverRadius: 7,
+            pointBackgroundColor: "rgb(234, 179, 8)",
+            pointBorderColor: "rgba(59, 130, 246, 1)",
+            pointBorderWidth: 1,
+          });
+        }
+        datasets.push(
+          {
+            label: linesOnly ? "Reference average, best-fit (0)" : "Real average (" + realAverage.toFixed(2) + " h)",
+            data: realAverageLine,
+            borderColor: "rgba(34, 197, 94, 1)",
+            borderDash: [5, 5],
+            borderWidth: 2,
+            pointRadius: 0,
+            fill: false,
+          },
+          {
+            label: linesOnly ? "29d 12h 793h" : "29d 12h 793h definition (0 h) — " + hoursDefinitionAfterAverage.toFixed(2) + " h after real avg",
+            data: definitionLine,
+            borderColor: "rgba(248, 250, 252, 0.8)",
+            borderDash: linesOnly ? [] : [3, 3],
+            borderWidth: linesOnly ? 2 : 1,
+            pointRadius: linesOnly ? 3 : 0,
+            pointBackgroundColor: "rgba(248, 250, 252, 0.9)",
+            fill: false,
+          }
+        );
+
+        var yMinFinal = yMin;
+        var yMaxFinal = yMax;
+        if (linesOnly && linesOnlyDefinitionData && linesOnlyDefinitionData.length) {
+          var defMin = Math.min.apply(null, linesOnlyDefinitionData);
+          var defMax = Math.max.apply(null, linesOnlyDefinitionData);
+          var padding = Math.max(0.5, (defMax - defMin) * 0.1 || 0.5);
+          yMinFinal = Math.min(0, defMin) - padding;
+          yMaxFinal = Math.max(0, defMax) + padding;
+        } else if (linesOnly) {
+          yMinFinal = Math.min(0, realAverage) - 2;
+          yMaxFinal = Math.max(0, realAverage) + 2;
+        }
+
         moonLineChart = new Chart(ctx, {
           type: "line",
           data: {
             labels: labels,
-            datasets: [{
-              label: "Hours later than 29d 12h 793h",
-              data: data,
-              borderColor: "rgba(59, 130, 246, 1)",
-              backgroundColor: "rgba(59, 130, 246, 0.2)",
-              tension: 0.1,
-              pointRadius: data.length <= 60 ? 2 : 0,
-            }],
+            datasets: datasets,
           },
-          options: {
+            options: {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
               x: {
-                title: { display: true, text: "Month (lunation)", color: "#e5e7eb" },
-                ticks: { color: "#e5e7eb", maxTicksLimit: 15 },
+                title: { display: true, text: "Hebrew date (new moon)", color: "#e5e7eb" },
+                ticks: { color: "#e5e7eb", maxTicksLimit: 15, maxRotation: 45, minRotation: 45 },
                 grid: { color: "rgba(31, 41, 55, 0.5)" },
               },
               y: {
-                title: { display: true, text: "Hours later", color: "#e5e7eb" },
-                min: yMin,
-                max: yMax,
+                title: { display: true, text: linesOnlyYAxisTitle || "Hours later", color: "#e5e7eb" },
+                min: yMinFinal,
+                max: yMaxFinal,
                 ticks: { color: "#e5e7eb" },
                 grid: { color: "rgba(31, 41, 55, 0.5)" },
               },
             },
             plugins: {
+              title: {
+                display: !!(linesOnlySlopeText || peakSubtitle),
+                text: linesOnlySlopeText || peakSubtitle,
+                color: "#e5e7eb",
+                font: { size: 12 },
+              },
               legend: { labels: { color: "#e5e7eb" } },
               tooltip: {
                 callbacks: {
                   title: function (items) {
                     if (!items.length) return "";
-                    return "Lunation " + items[0].label;
+                    return items[0].label;
                   },
                   label: function (context) {
                     const h = context.parsed.y;
@@ -1194,37 +1370,71 @@
         });
       }
 
-      btnMoonGraph.addEventListener("click", function () {
+      function getMoonYearsValue() {
+        var v = moonYearsInput ? Number(moonYearsInput.value) : (moonYearsSlider ? Number(moonYearsSlider.value) : MOON_GRAPH_DEFAULT_YEARS);
+        return Number.isFinite(v) ? v : MOON_GRAPH_DEFAULT_YEARS;
+      }
+
+      function setMoonYearsUI(maxYears, value) {
+        if (moonYearsInput) {
+          moonYearsInput.max = String(maxYears);
+          moonYearsInput.value = String(Math.max(1, Math.min(maxYears, value)));
+        }
+        if (moonYearsSlider) {
+          moonYearsSlider.max = String(maxYears);
+          moonYearsSlider.value = String(Math.max(1, Math.min(maxYears, value)));
+        }
+      }
+
+      if (moonYearsInput && moonYearsSlider) {
+        moonYearsInput.addEventListener("input", function () {
+          var v = getMoonYearsValue();
+          var linesOnly = moonLinesOnlyCb && moonLinesOnlyCb.checked;
+          var maxY = linesOnly ? MOON_GRAPH_LINES_ONLY_DEFAULT_YEARS : MOON_GRAPH_FULL_DISPLAY_MAX_YEARS;
+          v = Math.max(1, Math.min(maxY, v));
+          moonYearsSlider.value = String(v);
+          if (moonYearsInput.value !== String(v)) moonYearsInput.value = String(v);
+          runMoonGraph();
+        });
+        moonYearsSlider.addEventListener("input", function () {
+          var v = moonYearsSlider.value;
+          if (moonYearsInput) moonYearsInput.value = v;
+          runMoonGraph();
+        });
+      }
+
+      if (moonLinesOnlyCb) {
+        moonLinesOnlyCb.addEventListener("change", function () {
+          if (moonLinesOnlyCb.checked) {
+            moonYearsBeforeLinesOnly = Math.max(1, Math.min(MOON_GRAPH_FULL_DISPLAY_MAX_YEARS, getMoonYearsValue()));
+            setMoonYearsUI(MOON_GRAPH_LINES_ONLY_DEFAULT_YEARS, MOON_GRAPH_LINES_ONLY_DEFAULT_YEARS);
+          } else {
+            setMoonYearsUI(MOON_GRAPH_FULL_DISPLAY_MAX_YEARS, moonYearsBeforeLinesOnly);
+          }
+          runMoonGraph();
+        });
+      }
+
+      function runMoonGraph() {
         statsOutput.textContent = "";
         if (typeof Chart === "undefined" || !moonLineCanvas) return;
 
         const now = Moon.lunationNumber(new Date());
-        let startN = moonStartMonthInput ? Number(moonStartMonthInput.value) : now - MOON_GRAPH_DEFAULT_MONTHS + 1;
-        let endN = moonEndMonthInput ? Number(moonEndMonthInput.value) : now;
-        if (!Number.isFinite(startN)) startN = now - MOON_GRAPH_DEFAULT_MONTHS + 1;
-        if (!Number.isFinite(endN)) endN = now;
-        if (startN > endN) { const t = startN; startN = endN; endN = t; }
-        if (moonStartMonthInput) moonStartMonthInput.value = String(startN);
-        if (moonEndMonthInput) moonEndMonthInput.value = String(endN);
+        const linesOnly = moonLinesOnlyCb && moonLinesOnlyCb.checked;
+        const years = linesOnly
+          ? MOON_GRAPH_LINES_ONLY_DEFAULT_YEARS
+          : Math.max(1, Math.min(MOON_GRAPH_FULL_DISPLAY_MAX_YEARS, getMoonYearsValue()));
+        const countLunations = Math.max(1, Math.round(years * Moon.LUNATIONS_PER_YEAR));
+        const startN = now - countLunations + 1;
+        const endN = now;
 
         moonSeries = Moon.newMoonVsDefinitionRange(startN, endN);
         if (!moonSeries.lunations.length) return;
 
         if (moonChartWrapper) moonChartWrapper.style.display = "block";
-        const total = moonSeries.lunations.length;
-        const needsSlider = total > moonWindowSize;
-
-        if (moonRangeControls) moonRangeControls.style.display = needsSlider ? "flex" : "none";
-        if (moonRangeSlider && needsSlider) {
-          moonRangeSlider.min = "0";
-          moonRangeSlider.max = String(total - moonWindowSize);
-          moonRangeSlider.step = "1";
-          moonRangeSlider.value = String(Math.max(0, total - moonWindowSize));
-          moonRangeSlider.oninput = updateMoonChart;
-        }
-
         updateMoonChart();
-      });
+      }
+      runMoonGraphRef = runMoonGraph;
     }
 
     /* ======================== boot ================================ */
