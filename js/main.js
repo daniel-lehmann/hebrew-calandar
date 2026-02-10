@@ -71,6 +71,7 @@
     const btnTishreiList = document.getElementById("btn-tishrei-list");
     const btnTishreiHist = document.getElementById("btn-tishrei-hist");
     const btnHolidayGraphToggle = document.getElementById("btn-holiday-graph-toggle");
+    const btnRambamMeanSun = document.getElementById("btn-rambam-mean-sun");
     const statsOutput = document.getElementById("stats-output");
 
     /* --- List Hebrew date panel --- */
@@ -116,6 +117,9 @@
     const btnDehiyyotRun = document.getElementById("btn-dehiyyot-run");
     const dehiyyotResults = document.getElementById("dehiyyot-results");
     const dehiyyotTimeline = document.getElementById("dehiyyot-timeline");
+
+    /* --- Rambam mean sun panel --- */
+    const panelRambamMeanSun = document.getElementById("panel-rambam-mean-sun");
 
     const CYCLE_COLORS = [
       "#ef4444", "#f97316", "#f59e0b", "#eab308", "#84cc16",
@@ -513,6 +517,8 @@
       btnStatsBack.addEventListener("click", deactivateStat);
     }
 
+    /* ====================== Stat button wiring ========================= */
+
     // Run list Hebrew date by year (current selection)
     function runListStat() {
       const core = global.HebrewCore;
@@ -677,6 +683,18 @@
         if (moonChartWrapper) moonChartWrapper.style.display = "none";
         togglePanel("panel-holiday-graph");
         if (btnHolidayGraph) btnHolidayGraph.click();
+      });
+    }
+
+    // "Rambam mean sun (12:1)" — show explanation + precomputed table
+    if (btnRambamMeanSun && panelRambamMeanSun) {
+      btnRambamMeanSun.addEventListener("click", () => {
+        activateStat(btnRambamMeanSun);
+        if (moonChartWrapper) moonChartWrapper.style.display = "none";
+        togglePanel("panel-rambam-mean-sun");
+        if (global.RambamMeanSun && global.RambamMeanSun.initRambamPanel) {
+          global.RambamMeanSun.initRambamPanel();
+        }
       });
     }
 

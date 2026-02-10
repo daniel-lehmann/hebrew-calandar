@@ -1,0 +1,12 @@
+Write a module that can do real moon computations.
+Where the moon is. When is the new moon when is the full moon etc.
+
+If the computations are avialable use computations they need to be exact to a few minutes at least.
+If the computations aren't avialable then download moon times.
+test your values.
+
+Do this in a sepearate file.
+
+Then in the stats add a graph of new moon vs the 29d 12h 793h definition.
+the x axis will show month count and the y axis shows how much later the 'average month' is in hours.
+show the last 50 months and add a slider to select start month and end month.

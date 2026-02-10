@@ -1,0 +1,19 @@
+verse 12:1
+
+מהלך השמש האמצעי ביום אחד שהוא כ"ד שעות נ"ט חלקים ושמנה שניות. סימנם כ"ד נט"ח. נמצא מהלכה בעשרה ימים תשע מעלות ונ"א חלקים וכ"ג שניות. סימנם טנ"א כ"ג. ונמצא מהלכה במאה יום צ"ח מעלות ושלשה ושלשים חלקים ונ"ג שניות, סימנם צ"ח ל"ג נ"ג. ונמצא שארית מהלכה באלף יום אחר שתשליך כל ש"ס מעלות כמו שביארנו. רס"ה מעלות ול"ח חלקים ונ' שניות. סימנם רס"ה לח"ן. ונמצא שארית מהלכה בעשרת אלפים יום. קל"ו מעלות וכ"ח חלקים וכ' שניות. סימנם קל"ו כ"ח כ'. ועל הדרך הזה תכפול ותוציא מהלכה לכל מנין שתרצה. וכן אם תרצה לעשות סימנין ידועים אצלך למהלכה לשני ימים ולשלשה ולארבעה עד עשרה תעשה. וכן אם תרצה להיות לך סימנין ידועים מוכנין למהלכה לכ' יום ולל' ולמ' עד מאה תעשה. ודבר גלוי הוא וידוע מאחר שידעת מהלך יום אחד. וראוי הוא להיות מוכן וידוע אצלך מהלך אמצע השמש לכ"ט יום ולשנ"ד יום שהן ימי שנת הלבנה בזמן שחדשיה כסדרן. והיא הנקראת שנה סדורה. שבזמן שיהיו לך אמצעיות אלו מוכנין יהיה החשבון הזה קל עליך לראיית החדש. לפי שכ"ט יום גמורים מליל הראיה עד ליל הראיה של חדש הבא וכן בכל חדש וחדש אין פחות מכ"ט יום לא יותר. שאין חפצנו בכל אלו החשבונות אלא לדעת הראיה בלבד. וכן מליל הראיה של חדש זה עד ליל הראיה לאותו החדש לשנה הבאה שנה סדורה או שנה ויום אחד. וכן בכל שנה ושנה. ומהלך השמש האמצעי לכ"ט יום כ"ח מעלות ול"ה חלקים ושניה אחת. סימנן כ"ח ל"ה א'. ומהלכה לשנה סדורה שמ"ח מעלות ונ"ה חלקים וט"ו שניות סימנן שמ"ח נ"ה ט"ו.
+
+This is the Rambam's description of the motion of the sun's mean longitude.
+Create a new "Stat" that will be explanations of the rambam's description.
+with selection of which verse to show and explain we start with 12:1
+Format the text above nicely it is hebrew LTr
+
+Below show a table with the following columns:
+1. number of days
+2. sun mean movement in d m s by the rambam's description
+3. the movement % 360
+4. the implied daily movement by the number the rambam gives for these days.
+
+
+Do the computations and then hardcode the values in the table.
+
+Do all this is a sepearate file and module dont keep making existing files bigger and bigger.
