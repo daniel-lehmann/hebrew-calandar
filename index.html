@@ -145,13 +145,18 @@
               <label for="rambam-verse-select">Verse</label>
               <select id="rambam-verse-select"></select>
             </div>
-            <div class="rambam-verse-block">
-              <p id="rambam-verse-text" dir="rtl" lang="he"></p>
-              <p id="rambam-verse-explanation"></p>
+            <div class="rambam-verse-block quote-block">
+              <p id="rambam-verse-text" class="rambam-verse-hebrew quote-text" dir="rtl" lang="he"></p>
+              <p id="rambam-verse-explanation" class="rambam-verse-explanation"></p>
             </div>
             <div class="rambam-table-wrapper">
               <table id="rambam-mean-sun-table" class="rambam-table"></table>
             </div>
+            <div class="stats-controls rambam-days-controls">
+              <label for="rambam-days-input">Compute from daily motion (0° 59′ 8.33″)</label>
+              <input id="rambam-days-input" type="number" min="1" step="1" placeholder="Enter number of days" />
+            </div>
+            <p id="rambam-days-output" class="rambam-days-output"></p>
           </div>
 
           <!-- Charts -->

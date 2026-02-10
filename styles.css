@@ -496,6 +496,70 @@ button:active {
   background: #3b82f6;
 }
 
+/* ======== Rambam mean sun panel & quotes ======== */
+
+.rambam-verse-block {
+  margin-bottom: 0.75rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 0.5rem;
+  border: 1px solid #1f2937;
+  background: radial-gradient(circle at top left, rgba(148, 163, 184, 0.15), transparent 55%);
+}
+
+.quote-block {
+  font-family: "Georgia", "Times New Roman", "Noto Serif Hebrew", serif;
+}
+
+.quote-text {
+  margin: 0 0 0.4rem 0;
+  line-height: 1.7;
+}
+
+.rambam-verse-hebrew {
+  font-size: 1rem;
+}
+
+.rambam-verse-explanation {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #cbd5f5;
+}
+
+.rambam-table-wrapper {
+  margin-top: 0.5rem;
+  overflow-x: auto;
+}
+
+.rambam-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  color: #e5e7eb;
+}
+
+.rambam-table th,
+.rambam-table td {
+  border: 1px solid #334155;
+  padding: 0.35rem 0.5rem;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.rambam-table th {
+  background: #1e293b;
+  font-weight: 600;
+}
+
+.rambam-days-controls {
+  margin-top: 0.75rem;
+}
+
+.rambam-days-output {
+  margin-top: 0.25rem;
+  font-size: 0.85rem;
+  color: #e5e7eb;
+}
+
 .app-footer {
   margin-top: 1.25rem;
   text-align: center;

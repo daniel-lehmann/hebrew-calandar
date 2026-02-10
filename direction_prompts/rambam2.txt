@@ -1,0 +1,14 @@
+verse 12:2
+
+נקודה אחת יש בגלגל השמש וכן בשאר גלגלי השבעה כוכבים. בעת שיהיה הכוכב בה יהיה גבוה מעל הארץ כל מאורו. ואותה הנקודה של גלגל השמש ושאר הכוכבים חוץ מן הירח סובבת בשוה. ומהלכה בכל שבעים שנה בקירוב מעלה אחת. ונקודה זו היא הנקראת גובה השמש. מהלכו בכל עשרה ימים שניה אחת וחצי שניה שהיא ל' שלישיות. נמצא מהלכו בק' יום ט"ו שניות. ומהלכו באלף יום שני חלקים ושלשים שניות. ומהלכו בעשרת אלפים יום כ"ה חלקים.
+
+This is the description of the movement of the apogee of the sun.
+Add another rambam verse as a selection in the rambam explanation stat.
+Make a table here as you did there
+Add the computation here as you did there.
+
+add an explanation that the earth is somtimes far from the sun and sometime close.
+the angular motion of the earth is faster when it is close.
+We understand this using keplers laws and the ellipse orbit.
+In the days of the rambam this was understood as a circle that earth is not in the center of it.
+This ellipse slowly rotates in the sky as apposed to the distant start

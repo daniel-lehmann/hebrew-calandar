@@ -25,75 +25,190 @@
           "(1, 10, 100, 1000, 10000 days; 29 days; and a regular lunar year), " +
           "expressed in degrees, minutes and seconds. From these we can back out an implied daily mean motion.",
       },
+      {
+        id: "12:2",
+        label: "12:2 – גובה השמש (אפוגיאה)",
+        hebrewText:
+          "נקודה אחת יש בגלגל השמש וכן בשאר גלגלי השבעה כוכבים. בעת שיהיה הכוכב בה יהיה גבוה מעל הארץ כל מאורו. " +
+          "ואותה הנקודה של גלגל השמש ושאר הכוכבים חוץ מן הירח סובבת בשוה. " +
+          "ומהלכה בכל שבעים שנה בקירוב מעלה אחת. ונקודה זו היא הנקראת גובה השמש. " +
+          "מהלכו בכל עשרה ימים שניה אחת וחצי שניה שהיא ל' שלישיות. " +
+          "נמצא מהלכו בק' יום ט\"ו שניות. ומהלכו באלף יום שני חלקים ושלשים שניות. " +
+          "ומהלכו בעשרת אלפים יום כ\"ה חלקים.",
+        englishSummary:
+          "Rambam now describes the very slow motion of the sun's apogee – a special point on the sun's path, " +
+          "the place where the sun is highest above the Earth. In his sexagesimal units this point moves 1½ seconds " +
+          "in 10 days, 15 seconds in 100 days, 2 parts and 30 seconds in 1000 days, and 25 parts in 10,000 days. " +
+          "In modern terms this reflects that the Earth is sometimes closer to the sun and sometimes farther: its angular motion " +
+          "is faster when it is close (near perihelion) and slower when it is far (near aphelion). We understand this using Kepler's laws " +
+          "and the fact that the Earth's orbit is a slightly eccentric ellipse whose major axis slowly rotates with respect to the distant stars. " +
+          "In the days of the Rambam this was described instead as a circle whose centre is displaced from the Earth.",
+      },
     ];
 
     /**
-     * Rows for the explanation table.
+     * Rows for the explanation table for verse 12:1.
      *
-     * movementDeg and impliedDailyDeg are decimal degrees, pre‑computed from the Rambam values.
-     * pctOfCircle is (remainder / 360) * 100, i.e. how much of a full circle the listed motion represents.
-     *
-     * For 1000 and 10000 days, Rambam gives the remainder after throwing away whole 360° turns.
-     * To get the implied daily motion we add back 2 × 360° and 27 × 360° respectively before dividing by days.
+     * remainderDeg: Rambam's stated motion, in decimal degrees (after any 360° wrapping).
+     * revolutions:  how many full 360° turns were discarded (0 for most rows; 2 and 27 for 1000 and 10000 days).
+     * impliedDailyDeg: decimal degrees per day, using the full motion (remainder + revolutions × 360°).
      */
-    const TABLE_ROWS = [
+    const TABLE_ROWS_12_1 = [
       {
         days: 1,
-        movementDms: "0° 59′ 8″",
-        movementDeg: 0.9855555555555555,
-        pctOfCircle: 0.2737654320987654,
+        remainderDeg: 0.9855555555555555, // 0° 59′ 8″
+        revolutions: 0,
         impliedDailyDeg: 0.9855555555555555,
       },
       {
         days: 10,
-        movementDms: "9° 51′ 23″",
-        movementDeg: 9.856388888888889,
-        pctOfCircle: 2.737885802469136,
+        remainderDeg: 9.856388888888889, // 9° 51′ 23″
+        revolutions: 0,
         impliedDailyDeg: 0.9856388888888888,
       },
       {
         days: 100,
-        movementDms: "98° 33′ 53″",
-        movementDeg: 98.56472222222222,
-        pctOfCircle: 27.37908950617284,
+        remainderDeg: 98.56472222222222, // 98° 33′ 53″
+        revolutions: 0,
         impliedDailyDeg: 0.9856472222222222,
       },
       {
         days: 1000,
-        movementDms: "265° 38′ 50″  (remainder, after discarding whole circles)",
-        movementDeg: 985.6472222222222, // 2 × 360° + 265° 38′ 50″
-        pctOfCircle: 73.79089506172839, // based on remainder only
+        remainderDeg: 265.64722222222224, // 265° 38′ 50″ – remainder after discarding 2 × 360°
+        revolutions: 2,
         impliedDailyDeg: 0.9856472222222222,
       },
       {
         days: 10000,
-        movementDms: "136° 28′ 20″  (remainder, after discarding whole circles)",
-        movementDeg: 9856.472222222223, // 27 × 360° + 136° 28′ 20″
-        pctOfCircle: 37.90895061728395, // based on remainder only
+        remainderDeg: 136.47222222222223, // 136° 28′ 20″ – remainder after discarding 27 × 360°
+        revolutions: 27,
         impliedDailyDeg: 0.9856472222222222,
       },
       {
         days: 29,
-        movementDms: "28° 35′ 1″",
-        movementDeg: 28.58361111111111,
-        pctOfCircle: 7.939891975308642,
+        remainderDeg: 28.58361111111111, // 28° 35′ 1″
+        revolutions: 0,
         impliedDailyDeg: 0.9856417624521073,
       },
       {
         days: 354, // regular lunar year (12 lunar months)
-        movementDms: "348° 55′ 15″",
-        movementDeg: 348.92083333333335,
-        pctOfCircle: 96.92245370370371,
+        remainderDeg: 348.92083333333335, // 348° 55′ 15″
+        revolutions: 0,
         impliedDailyDeg: 0.9856520715630885,
       },
     ];
 
-    function formatPercent(v) {
-      return v.toFixed(6) + " %";
+    /**
+     * Rows for the explanation table for verse 12:2 – the motion of the sun's apogee (גובה השמש).
+     *
+     * Here Rambam gives motions only in small fractions of a degree (parts, seconds, thirds), so there is no 360° wrapping.
+     */
+    const TABLE_ROWS_12_2 = [
+      {
+        days: 10,
+        // 1.5 arcseconds = 1.5 / 3600 degrees.
+        remainderDeg: 1.5 / 3600,
+        revolutions: 0,
+        // Implied daily motion: 1.5 arcseconds in 10 days.
+        impliedDailyDeg: (1.5 / 3600) / 10,
+      },
+      {
+        days: 100,
+        // 15 arcseconds = 15 / 3600 degrees.
+        remainderDeg: 15 / 3600,
+        revolutions: 0,
+        impliedDailyDeg: (15 / 3600) / 100,
+      },
+      {
+        days: 1000,
+        // 2 parts and 30 seconds: 2/60 degrees + 30/3600 degrees.
+        remainderDeg: 2 / 60 + 30 / 3600,
+        revolutions: 0,
+        impliedDailyDeg: (2 / 60 + 30 / 3600) / 1000,
+      },
+      {
+        days: 10000,
+        // 25 parts = 25/60 degrees.
+        remainderDeg: 25 / 60,
+        revolutions: 0,
+        impliedDailyDeg: (25 / 60) / 10000,
+      },
+    ];
+
+    // Daily mean motion used for free-form computations: 0° 59′ 8.33″
+    const DAILY_DEG_059_08_33 = 0.9856472222222222;
+
+    function degToDms(deg) {
+      const sign = deg < 0 ? -1 : 1;
+      let x = Math.abs(deg);
+      let d = Math.floor(x);
+      let mFloat = (x - d) * 60;
+      let m = Math.floor(mFloat);
+      let s = (mFloat - m) * 60;
+      // Round seconds to 2 decimal places and normalise carry to minutes/degrees.
+      s = Number(s.toFixed(2));
+      if (s >= 60) {
+        s -= 60;
+        m += 1;
+      }
+      if (m >= 60) {
+        m -= 60;
+        d += 1;
+      }
+      if (sign < 0) d = -d;
+      return { d, m, s };
     }
 
-    function formatDailyDeg(v) {
-      return v.toFixed(9) + " °/day";
+    function formatDms(deg) {
+      const { d, m, s } = degToDms(deg);
+      const signStr = d < 0 ? "-" : "";
+      const absD = Math.abs(d);
+      return (
+        signStr +
+        absD +
+        "° " +
+        String(m) +
+        "′ " +
+        s.toFixed(2) +
+        "″"
+      );
+    }
+
+    function updateDaysComputation() {
+      const input = document.getElementById("rambam-days-input");
+      const outEl = document.getElementById("rambam-days-output");
+      if (!input || !outEl) return;
+
+      const raw = input.value;
+      const n = Number(raw);
+      if (!raw || !Number.isFinite(n) || n <= 0) {
+        outEl.textContent =
+          "Enter a positive number of days to see the total mean motion.";
+        return;
+      }
+
+      const totalDeg = n * DAILY_DEG_059_08_33;
+      const totalStr = formatDms(totalDeg);
+
+      let html =
+        "Total mean motion for " +
+        n +
+        " day" +
+        (n === 1 ? "" : "s") +
+        ": <strong>" +
+        totalStr +
+        "</strong>";
+
+      if (Math.abs(totalDeg) >= 360) {
+        // Normalise modulo 360 to [0, 360).
+        let wrapped = totalDeg % 360;
+        if (wrapped < 0) wrapped += 360;
+        const wrappedStr = formatDms(wrapped);
+        html +=
+          "<br />Motion modulo 360°: <strong>" + wrappedStr + "</strong>";
+      }
+
+      outEl.innerHTML = html;
     }
 
     function populateVerseSelect(selectEl) {
@@ -121,21 +236,39 @@
       if (enEl) {
         enEl.textContent = verse.englishSummary;
       }
+
+      // Whenever we change verse, update the accompanying table to match.
+      renderTable(id);
     }
 
-    function renderTable() {
+    function renderTable(verseId) {
       const tableEl = document.getElementById("rambam-mean-sun-table");
       if (!tableEl) return;
+
+      // Determine which verse's table to show. Default to the first verse.
+      const effectiveId =
+        verseId ||
+        (typeof document !== "undefined" &&
+          document.getElementById("rambam-verse-select") &&
+          document.getElementById("rambam-verse-select").value) ||
+        VERSES[0].id;
+
+      const rows =
+        effectiveId === "12:2" ? TABLE_ROWS_12_2 : TABLE_ROWS_12_1;
 
       tableEl.innerHTML = "";
 
       const thead = document.createElement("thead");
       const headRow = document.createElement("tr");
+      const col2Label =
+        effectiveId === "12:2"
+          ? "Rambam apogee motion (d° m′ s″)"
+          : "Rambam mean motion (d° m′ s″, with wrapping)";
       [
         "Number of days",
-        "Mean motion (degrees, minutes, seconds)",
-        "Motion as % of 360° (using Rambam's remainder)",
-        "Implied daily motion (degrees per day)",
+        col2Label,
+        "Full motion (no 360° modulo)",
+        "Implied daily motion (d° m′ s″ per day)",
       ].forEach((label) => {
         const th = document.createElement("th");
         th.textContent = label;
@@ -145,23 +278,25 @@
       tableEl.appendChild(thead);
 
       const tbody = document.createElement("tbody");
-      TABLE_ROWS.forEach((row) => {
+      rows.forEach((row) => {
         const tr = document.createElement("tr");
 
         const tdDays = document.createElement("td");
         tdDays.textContent = String(row.days);
         tr.appendChild(tdDays);
 
+        const fullDeg = row.remainderDeg + row.revolutions * 360;
+
         const tdDms = document.createElement("td");
-        tdDms.textContent = row.movementDms;
+        tdDms.textContent = formatDms(row.remainderDeg);
         tr.appendChild(tdDms);
 
-        const tdPct = document.createElement("td");
-        tdPct.textContent = formatPercent(row.pctOfCircle);
-        tr.appendChild(tdPct);
+        const tdFull = document.createElement("td");
+        tdFull.textContent = formatDms(fullDeg);
+        tr.appendChild(tdFull);
 
         const tdDaily = document.createElement("td");
-        tdDaily.textContent = formatDailyDeg(row.impliedDailyDeg);
+        tdDaily.textContent = formatDms(row.impliedDailyDeg);
         tr.appendChild(tdDaily);
 
         tbody.appendChild(tr);
@@ -183,9 +318,15 @@
         });
       }
 
+      const daysInput = document.getElementById("rambam-days-input");
+      if (daysInput) {
+        daysInput.addEventListener("input", updateDaysComputation);
+      }
+
       // Initial verse and table.
       renderVerse(VERSES[0].id);
-      renderTable();
+      renderTable(VERSES[0].id);
+      updateDaysComputation();
     }
 
     return {
