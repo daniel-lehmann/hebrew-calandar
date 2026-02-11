@@ -528,21 +528,30 @@ button:active {
 .rambam-table-wrapper {
   margin-top: 0.5rem;
   overflow-x: auto;
+  max-height: 260px; /* make table area smaller */
+  overflow-y: auto;  /* vertical slider when there are many rows */
 }
 
 .rambam-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.85rem;
+  font-size: 0.8rem; /* slightly smaller text */
   color: #e5e7eb;
 }
 
 .rambam-table th,
 .rambam-table td {
   border: 1px solid #334155;
-  padding: 0.35rem 0.5rem;
+  padding: 0.25rem 0.4rem; /* tighter cells to keep table compact */
   text-align: left;
   white-space: nowrap;
+}
+
+.rambam-interp-note {
+  margin-top: 0.15rem;
+  font-size: 0.7rem;
+  color: #9ca3af;
+  white-space: normal;
 }
 
 .rambam-table th {
@@ -557,6 +566,141 @@ button:active {
 .rambam-days-output {
   margin-top: 0.25rem;
   font-size: 0.85rem;
+  color: #e5e7eb;
+}
+
+.rambam-visualization {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.rambam-angle-readout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: #cbd5f5;
+}
+
+.rambam-angle-readout span {
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid #1f2937;
+  min-width: 10em;
+  display: inline-block;
+  text-align: left;
+}
+
+.rambam-orbit-svg {
+  width: 100%;
+  max-width: 630px;
+  height: 540px;
+  display: block;
+  margin: 0.25rem auto 0.5rem auto;
+  background: radial-gradient(circle at center, rgba(253, 224, 71, 0.08), transparent 65%);
+}
+
+.rambam-orbit-path {
+  fill: none;
+  stroke: #1f2937;
+  stroke-width: 0.015;
+}
+
+.rambam-sun {
+  fill: #facc15;
+  stroke: #fef9c3;
+  stroke-width: 0.006;
+}
+
+.rambam-earth-centre {
+  fill: #0ea5e9;
+  stroke: #e0f2fe;
+  stroke-width: 0.006;
+}
+
+.rambam-sun-orbit {
+  fill: #facc15;
+  stroke: #fef9c3;
+  stroke-width: 0.01;
+}
+
+.rambam-mean-line {
+  stroke: #fb923c;
+  stroke-width: 0.02;
+}
+
+.rambam-true-line {
+  stroke: #38bdf8;
+  stroke-width: 0.02;
+}
+
+.rambam-arc-alpha,
+.rambam-arc-beta {
+  fill: none;
+  stroke-width: 0.012;
+}
+
+.rambam-arc-alpha {
+  stroke: #fb923c;
+}
+
+.rambam-arc-beta {
+  stroke: #38bdf8;
+}
+
+.rambam-angle-label {
+  fill: #e5e7eb;
+  font-size: 0.12px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.rambam-orbit-svg-full {
+  max-width: min(1400px, 96vw);
+  height: min(1000px, 88vh);
+}
+
+.rambam-vis-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(4px);
+}
+
+.rambam-vis-modal-inner {
+  position: relative;
+  background: #020617;
+  border-radius: 0.75rem;
+  border: 1px solid #1f2937;
+  padding: 0.75rem;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+}
+
+.rambam-vis-close {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.5rem;
+  background: transparent;
+  border: none;
+  color: #e5e7eb;
+  font-size: 1.6rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.rambam-vis-close:hover {
+  color: #facc15;
+}
+
+.rambam-computation-text {
+  margin-top: 0.4rem;
+  font-size: 0.8rem;
   color: #e5e7eb;
 }
 

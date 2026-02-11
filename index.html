@@ -59,7 +59,7 @@
             <button id="btn-holiday-graph-toggle" class="stat-btn">Holiday line graph</button>
             <button id="btn-dehiyyot-stats" class="stat-btn">Dehiyyot (postponement) stats</button>
             <button id="btn-moon-graph-toggle" class="stat-btn">New moon vs 29d 12h 793h</button>
-            <button id="btn-rambam-mean-sun" class="stat-btn">Rambam mean sun (12:1)</button>
+            <button id="btn-rambam-mean-sun" class="stat-btn">Rambam Kiddush HaChodesh</button>
           </div>
 
           <!-- Panel: Day-of-week histogram -->
@@ -151,6 +151,42 @@
             </div>
             <div class="rambam-table-wrapper">
               <table id="rambam-mean-sun-table" class="rambam-table"></table>
+            </div>
+            <div class="rambam-visualization">
+              <div class="stats-controls rambam-vis-controls">
+                <label>
+                  <input type="checkbox" id="rambam-vis-smooth" />
+                  Smooth motion
+                </label>
+              </div>
+              <div class="rambam-angle-readout">
+                <span id="rambam-angle-mean"></span>
+                <span id="rambam-angle-true"></span>
+                <span id="rambam-angle-diff"></span>
+              </div>
+              <svg
+                id="rambam-orbit-svg"
+                class="rambam-orbit-svg"
+                viewBox="-1.5 -1.5 3 3"
+                preserveAspectRatio="xMidYMid meet"
+                aria-label="Earth orbiting the sun with mean and true angles"
+              ></svg>
+            </div>
+            <div id="rambam-computation-text" class="rambam-computation-text"></div>
+            <div class="stats-controls rambam-ecc-controls">
+              <label for="rambam-eccentricity-input">
+                Eccentricity used in the Rambam-style model
+              </label>
+              <input
+                id="rambam-eccentricity-input"
+                type="number"
+                min="0"
+                max="0.3"
+                step="0.00001"
+              />
+              <span class="hint">
+                Small values are realistic (e.g. 0.03–0.04); larger values show a bigger effect in the diagram.
+              </span>
             </div>
             <div class="stats-controls rambam-days-controls">
               <label for="rambam-days-input">Compute from daily motion (0° 59′ 8.33″)</label>
