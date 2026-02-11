@@ -1,0 +1,60 @@
+/* rambam-sun-calc.css – Sun position from epoch (Rambam calc) */
+
+.rambam-calc-intro {
+  margin-bottom: 0.75rem;
+  color: var(--text-muted, #555);
+  font-size: 0.95em;
+}
+
+.rambam-calc-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.rambam-calc-controls label {
+  margin-right: 0.25rem;
+}
+
+.rambam-calc-controls input[type="number"],
+.rambam-calc-controls select {
+  min-width: 4em;
+}
+
+.rambam-calc-checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-left: 0.5rem;
+}
+
+.rambam-calc-output {
+  margin-top: 1rem;
+}
+
+.rambam-calc-table {
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+}
+
+.rambam-calc-table th,
+.rambam-calc-table td {
+  border: 1px solid var(--border-color, #ccc);
+  padding: 0.35rem 0.75rem;
+  text-align: left;
+}
+
+.rambam-calc-table th {
+  background: var(--table-header-bg, #f0f0f0);
+  font-weight: 600;
+}
+
+.rambam-calc-error {
+  color: var(--error-color, #c00);
+}
+
+.rambam-calc-output p {
+  margin: 0.25rem 0;
+}

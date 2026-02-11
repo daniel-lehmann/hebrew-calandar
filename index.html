@@ -5,6 +5,7 @@
     <title>Hebrew Calendar 5786</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles/rambam-sun-calc.css" />
   </head>
   <body>
     <div class="app">
@@ -60,6 +61,7 @@
             <button id="btn-dehiyyot-stats" class="stat-btn">Dehiyyot (postponement) stats</button>
             <button id="btn-moon-graph-toggle" class="stat-btn">New moon vs 29d 12h 793h</button>
             <button id="btn-rambam-mean-sun" class="stat-btn">Rambam Kiddush HaChodesh</button>
+            <button id="btn-rambam-sun-calc" class="stat-btn">Rambam sun calc (from epoch)</button>
           </div>
 
           <!-- Panel: Day-of-week histogram -->
@@ -195,6 +197,51 @@
             <p id="rambam-days-output" class="rambam-days-output"></p>
           </div>
 
+          <!-- Panel: Rambam sun calc from epoch (Nisan 3 4938) -->
+          <div class="stats-panel" id="panel-rambam-sun-calc" style="display:none;">
+            <p class="rambam-calc-intro">Epoch: Thursday Nisan 3 4938, 0 hours (Hebrew). Day starts at 18:00.</p>
+            <div class="rambam-calc-controls stats-controls">
+              <label for="rambam-calc-year">Year</label>
+              <input id="rambam-calc-year" type="number" min="1" max="9999" value="4938" />
+              <label for="rambam-calc-month">Month</label>
+              <select id="rambam-calc-month"></select>
+              <label for="rambam-calc-day">Day</label>
+              <input id="rambam-calc-day" type="number" min="1" max="30" value="14" />
+              <label for="rambam-calc-hour">Hour (0 = start of day, 18:00 civil)</label>
+              <select id="rambam-calc-hour">
+                <option value="0" selected>0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+                <option value="16">16</option>
+                <option value="17">17</option>
+                <option value="18">18</option>
+                <option value="19">19</option>
+                <option value="20">20</option>
+                <option value="21">21</option>
+                <option value="22">22</option>
+                <option value="23">23</option>
+              </select>
+              <label class="rambam-calc-checkbox-label">
+                <input type="checkbox" id="rambam-calc-use-rambam" checked />
+                Use Rambam calculation (table, distance rounded to nearest degree)
+              </label>
+            </div>
+            <div id="rambam-calc-output" class="rambam-calc-output"></div>
+          </div>
+
           <!-- Charts -->
           <div class="stats-charts">
             <div class="chart-wrapper" id="holiday-chart-wrapper" style="display:none;">
@@ -224,6 +271,8 @@
     <script src="js/hebrew-core.js"></script>
     <script src="js/stats.js"></script>
     <script src="js/rambam-mean-sun.js"></script>
+    <script src="js/rambam-helpers.js"></script>
+    <script src="js/rambam-sun-calc.js"></script>
     <script src="js/view.js"></script>
     <script src="js/search.js"></script>
     <script src="data/parashot-data.js"></script>

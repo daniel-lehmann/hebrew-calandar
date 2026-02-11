@@ -1,0 +1,36 @@
+The epoch is at thursday Nisan 3 4938 0 hours.
+Notice the hebrew date starts from the night so this is actuall 6 in the evening on wednesday.
+
+The sun position in the averrage motion:
+7 deg 3 arcminutes 32 arcseconds
+
+The furthest point of the sun was at:
+86 deg 45 minutes 8 seconds
+
+You need to create a page that does 3 computations.
+we will be adding to these so be ready for that.
+
+A. Allow the user to select a hebrew date. 
+year, Month, day you can do this like the search you already created in the calendar.
+Then allow selecting time do this is a similar search idea.
+Select time. The day starts at 18:00 so monday 00:00 is sunday 18:00.
+
+B. Comute the time passed from epoch
+
+C. Show 3 calculations:
+1. sun average place. you take the epoch and add averrage motion * time passed.
+2. aphelion place. place at epoch + motion * time.
+3. distance of averrage from aphelion. 2-1
+4. real place of sun - use the anomal correction we already did.
+
+remember all places are modulu 360
+
+Default the date to saturday Tamuz 14 4938 0 hours.
+
+Add this as another rambam calc. 
+Do it in seperate files so the files stop getting bloated.
+html,css, js all seperate and load it in as needed. 
+
+
+
+

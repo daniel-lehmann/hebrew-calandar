@@ -121,6 +121,10 @@
     /* --- Rambam mean sun panel --- */
     const panelRambamMeanSun = document.getElementById("panel-rambam-mean-sun");
 
+    /* --- Rambam sun calc (from epoch) panel --- */
+    const btnRambamSunCalc = document.getElementById("btn-rambam-sun-calc");
+    const panelRambamSunCalc = document.getElementById("panel-rambam-sun-calc");
+
     const CYCLE_COLORS = [
       "#ef4444", "#f97316", "#f59e0b", "#eab308", "#84cc16",
       "#22c55e", "#14b8a6", "#06b6d4", "#0ea5e9", "#3b82f6",
@@ -694,6 +698,18 @@
         togglePanel("panel-rambam-mean-sun");
         if (global.RambamMeanSun && global.RambamMeanSun.initRambamPanel) {
           global.RambamMeanSun.initRambamPanel();
+        }
+      });
+    }
+
+    // "Rambam sun calc (from epoch)" — Hebrew date + time → time from epoch, 4 sun calculations
+    if (btnRambamSunCalc && panelRambamSunCalc) {
+      btnRambamSunCalc.addEventListener("click", () => {
+        activateStat(btnRambamSunCalc);
+        if (moonChartWrapper) moonChartWrapper.style.display = "none";
+        togglePanel("panel-rambam-sun-calc");
+        if (global.RambamSunCalc && global.RambamSunCalc.initPanel) {
+          global.RambamSunCalc.initPanel();
         }
       });
     }
