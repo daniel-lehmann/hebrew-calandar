@@ -1,0 +1,35 @@
+Verse 14:3
+ומהלך אמצע המסלול ביום אחד י"ג מעלות ושלשה חלקים ונ"ד שניות. סימנם י"ג גנ"ד. נמצא מהלכו בעשרה ימים ק"ל מעלות ל"ט חלקים בלא שניות. סימנם ק"ל ל"ט. ונמצא שארית מהלכו במאה יום רכ"ו מעלות וכ"ט חלקים ונ"ג שניות. סימנם רכ"ו כ"ט נ"ג. ונמצא שארית מהלכו באלף יום ק"ד מעלות ונ"ח חלקים וחמשים שניות. סימנם ק"ד נח"ן. ונמצא שארית מהלכו בעשרת אלפים יום שכ"ט מעלות ומ"ח חלקים ועשרים שניות. סימנם שכ"ט מח"כ. ונמצא שארית מהלכו בכ"ט יום י"ח מעלות ונ"ג חלקים וד' שניות. סימנם י"ח נג"ד.
+
+
+Verse 14:4
+ונמצא שארית מהלכו בשנה סדורה ש"ה מעלות וי"ג שניות בלא חלקים. סימנם ש"ה י"ג. מקום אמצע הירח היה בתחלת ליל חמישי שהוא העיקר לחשבונות אלו במזל שור מעלה אחת וי"ד חלקים ומ"ג שניות. סימנם א' י"ד מ"ג. ואמצע המסלול היה בעיקר זה פ"ד מעלות וכ"ח חלקים ומ"ב שניות. סימנם פ"ד כ"ח מ"ב. מאחר שתדע מהלך אמצע הירח והאמצע שהוא העיקר שעליו תוסיף. תדע מקום אמצע הירח בכל יום שתרצה על דרך שעשית באמצע השמש. ואחר שתוציא אמצע הירח לתחלת הלילה שתרצה התבונן בשמש ודע באי זה מזל הוא.
+
+***************
+
+The belief back then was that the moon moves in two different movements.
+in a previous verrse The first is described. here the second movement is described
+
+Explain what the rambam says.
+Then create a table like you did for the other rambam verses:
+The columns are:
+1. number of days
+2. moon mean movement in d m s implied by the value in (3) you will have to add in the full rotations * 360
+3. the movement % 360b y the rambam's description
+4. the implied daily movement by the number the rambam gives for these days.
+
+Also include above this the time it takes for one cycle:
+360 / {rambams quoted movement for one day}
+Add for a comparison: 
+1. the length of the sinodic month known to us today.
+2. length of sidreal month
+3. length of the anomalistic month. 
+Add a short explanation for all
+
+Make this modular so do not add code to main files.
+use util files if you need common code do not write code again.
+read Architecture.md file to understand the code
+
+This needs to be added to the list of explained rambam verses.
+in drop down rambam-verse-select.
+It will be shown only after it is selected.

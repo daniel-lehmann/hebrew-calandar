@@ -544,14 +544,49 @@
         enEl.textContent = verse.englishSummary;
       }
 
-      // Whenever we change verse, update the accompanying table to match.
-      renderTable(id);
-
-      // Show or hide auxiliary controls depending on verse.
+      const sunTableWrapper = document.getElementById("rambam-sun-table-wrapper");
+      const moonBlock = document.getElementById("rambam-moon-mean-block");
+      const moonPathBlock = document.getElementById("rambam-moon-mean-path-block");
       const daysControls = document.querySelector(".rambam-days-controls");
       const daysOutput = document.getElementById("rambam-days-output");
       const visBlock = document.querySelector(".rambam-visualization");
       const eccControls = document.querySelector(".rambam-ecc-controls");
+
+      if (id === "14:1") {
+        if (sunTableWrapper) sunTableWrapper.style.display = "none";
+        if (moonBlock) moonBlock.style.display = "";
+        if (moonPathBlock) moonPathBlock.style.display = "none";
+        if (daysControls) daysControls.style.display = "none";
+        if (daysOutput) daysOutput.style.display = "none";
+        if (visBlock) visBlock.style.display = "none";
+        if (eccControls) eccControls.style.display = "none";
+        const RambamMoonMean = global.RambamMoonMean;
+        if (RambamMoonMean && RambamMoonMean.renderMoonContent) {
+          RambamMoonMean.renderMoonContent();
+        }
+        return;
+      }
+
+      if (id === "14:3") {
+        if (sunTableWrapper) sunTableWrapper.style.display = "none";
+        if (moonBlock) moonBlock.style.display = "none";
+        if (moonPathBlock) moonPathBlock.style.display = "";
+        if (daysControls) daysControls.style.display = "none";
+        if (daysOutput) daysOutput.style.display = "none";
+        if (visBlock) visBlock.style.display = "none";
+        if (eccControls) eccControls.style.display = "none";
+        const RambamMoonMeanPath = global.RambamMoonMeanPath;
+        if (RambamMoonMeanPath && RambamMoonMeanPath.renderMoonPathContent) {
+          RambamMoonMeanPath.renderMoonPathContent();
+        }
+        return;
+      }
+
+      if (sunTableWrapper) sunTableWrapper.style.display = "";
+      if (moonBlock) moonBlock.style.display = "none";
+      if (moonPathBlock) moonPathBlock.style.display = "none";
+
+      renderTable(id);
 
       if (daysControls) {
         daysControls.style.display = id === "12:1" ? "" : "none";
@@ -561,7 +596,6 @@
       }
 
       if (visBlock) {
-        // Show the orbit visualization only for verse 13:4.
         visBlock.style.display = id === "13:4" ? "" : "none";
       }
 
@@ -569,7 +603,6 @@
         eccControls.style.display = id === "13:4" ? "" : "none";
       }
 
-      // Update the textual explanation under the diagram / table.
       updateComputationText(id);
     }
 
@@ -781,6 +814,25 @@
     function initRambamPanel() {
       if (initialized) return;
       initialized = true;
+
+      if (global.RambamMoonMean && global.RambamMoonMean.getVerseData) {
+        const d = global.RambamMoonMean.getVerseData();
+        VERSES.push({
+          id: "14:1",
+          label: "14:1–14:2 – מהלך אמצע הירח",
+          hebrewText: d.hebrewText,
+          englishSummary: d.englishSummary,
+        });
+      }
+      if (global.RambamMoonMeanPath && global.RambamMoonMeanPath.getVerseData) {
+        const d = global.RambamMoonMeanPath.getVerseData();
+        VERSES.push({
+          id: "14:3",
+          label: "14:3–14:4 – מהלך אמצע המסלול",
+          hebrewText: d.hebrewText,
+          englishSummary: d.englishSummary,
+        });
+      }
 
       const verseSelect = document.getElementById("rambam-verse-select");
       populateVerseSelect(verseSelect);

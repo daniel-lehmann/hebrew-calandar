@@ -1,0 +1,28 @@
+Verse 13:4
+
+וכמה היא מנת המסלול. אם יהיה המסלול עשר מעלות. תהיה מנתו כ' חלקים. ואם יהיה כ' מעלות תהיה מנתו מ' חלקים. ואם יהיה ל' מעלות תהיה מנתו נ"ח חלקים. ואם יהיה מ' מעלות תהיה מנתו מעלה אחת וט"ו חלקים. ואם יהיה נ' מעלות תהיה מנתו מעלה אחת וכ"ט חלקים. ואם יהיה ס' מעלות תהיה מנתו מעלה אחת ומ"א חלקים. ואם יהיה ע' מעלות תהיה מנתו מעלה אחת ונ"א חלקים. ואם יהיה פ' מעלות תהיה מנתו מעלה ונ"ז חלקים. ואם יהיה צ' מעלות תהיה מנתו מעלה אחת ונ"ט חלקים. ואם יהיה ק' מעלות תהיה מנתו מעלה אחת ונ"ח חלקים. ואם יהיה ק"י תהיה מנתו מעלה אחת ונ"ג חלקים. ואם יהיה ק"כ תהיה מנתו מעלה אחת ומ"ה חלקים. ואם יהיה ק"ל תהיה מנתו מעלה אחת ול"ג חלקים. ואם יהיה ק"מ תהיה מנתו מעלה אחת וי"ט חלקים. ואם יהיה ק"נ תהיה מנתו מעלה אחת וחלק אחד. ואם יהיה ק"ס תהיה מנתו מ"ב חלקים. ואם יהיה ק"ע תהיה מנתו כ"א חלקים. ואם יהיה ק"פ בשוה אין לו מנה כמו שביארנו אלא מקום השמש האמצעי הוא מקומה האמתי.
+
+
+Here the rambam gives how much you need to fix the sun position due to the iregularity.
+Out underrstanding is that this is due to the ellipse orbit and keplers law.
+The rambam understanding is that this is due to the earth not being in the middle of the circular orbit.
+
+Create a table that shows the rambam's numbers:
+1. The average motion. 10, 20, 30...
+2. The fix the rambam gives
+3. The fix calculated using:
+
+def get_anomaly(deg):
+    deg = math.radians(deg)
+    rad = deg - math.atan2(math.sin(deg), math.cos(deg) + 0.03462)
+    return math.degrees(rad)
+
+Also add the calculation using our understanding - add modern numbers.
+
+Add this as another verse that is explained.
+Text nicely formated above below that an explanation.
+Below that the table described above.
+
+Allow adjusting the eccentricity value that will change the values computed in the table.
+chaning the text will change the values.
+But dont allow big changes that dont make sense.

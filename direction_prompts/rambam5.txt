@@ -1,0 +1,33 @@
+Verse 14:1
+הירח שני מהלכים אמצעיים יש לו. הירח עצמו מסבב בגלגל קטן שאינו מקיף את העולם כולו. ומהלכו האמצעי באותו הגלגל הקטן נקרא אמצעי המסלול. והגלגל הקטן עצמו מסבב בגלגל גדול המקיף את העולם. ובמהלך אמצעי זה של גלגל הקטן באותו הגלגל הגדול המקיף את העולם הוא הנקרא אמצע הירח. מהלך אמצע הירח ביום אחד י"ג מעלות וי' חלקים ול"ה שניות. סימנם י"ג יל"ה.
+
+Verse 14:2
+נמצא מהלכו בעשרה ימים קל"א מעלות ומ"ה חלקים וחמשים שניות. סימנם קל"א מה"נ. ונמצא שארית מהלכו בק' יום רל"ז מעלות ול"ח חלקים וכ"ג שניות. סימנם רל"ז ל"ח כ"ג. ונמצאת שארית מהלכו באלף יום רי"ו מעלות וכ"ג חלקים ונ' שניות. סימנם רי"ו כג"ן. ונמצא שארית מהלכו בי' אלפים יום ג' מעלות ונ"ח חלקים וכ' שניות. סימנם ג' נ"ח כ'. ונמצא שארית מהלכו בכ"ט יום כ"ב מעלות וששה חלקים ונ"ו שניות. סימנם כ"ב ונ"ו. ונמצא שארית מהלכו בשנה סדורה שמ"ד מעלות וכ"ו חלקים ומ"ג שניות. סימן להם שד"ם כ"ו מ"ג. ועל דרך זו תכפול לכל מנין ימים או שנים שתרצה.
+
+***************
+
+The belief back then was that the moon moves in two different movements.
+The first described here is on a small cycle that cycles around the perimeter of the big circle.
+
+Explain what the rambam says.
+Then create a table like you did for the other rambam verses:
+The columns are:
+1. number of days
+2. moon mean movement in d m s by the rambam's description
+3. the movement % 360
+4. the implied daily movement by the number the rambam gives for these days.
+
+Also include above this the time it takes for one cycle:
+360 / {rambams quoted movement for one day}
+Add for a comparison: 
+1. the length of the sinodic month known to us today.
+2. length of sidreal month
+3. length of the anomalistic month. 
+Add a short explanation for all
+
+Make this modular so do not add code to main files.
+use util files if you need common code do not write code again.
+read Architecture.md file to understand the code
+
+This needs to be added to the list of explained rambam verses.
+It will be shown only after it is selected.

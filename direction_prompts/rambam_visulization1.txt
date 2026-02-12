@@ -1,0 +1,7 @@
+in the Verse 13:4
+Add a Visulization using svg or the like.
+It will show earth moving around the sun.
+It will move in ticks of + 10 degrees completing a circle in a minute.
+(Add a checkbox to change it to smooth motion)
+use the eccentricity value in the tab (that can be adjusted).
+Show also the 2 angles and write above the 2 angles and the difference between them.

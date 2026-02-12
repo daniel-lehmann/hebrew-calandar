@@ -19,6 +19,12 @@
     const DAILY_MEAN_DEG = 0.9856472222222222;
     const DAILY_APHELION_DEG = 1.5 / 3600 / 10;
 
+    // Moon at epoch and daily motions from Rambam 14:1–14:4 (verses dropdown)
+    const MOON_MAIN_AT_EPOCH_DEG = 31 + 14 / 60 + 43 / 3600;   // mean main motion (big cycle), 14:1–14:2
+    const MOON_EPICYCLE_AT_EPOCH_DEG = 84 + 28 / 60 + 42 / 3600; // epicycle motion, 14:3–14:4
+    const MOON_DAILY_MAIN_DEG = 13 + 10 / 60 + 35 / 3600;      // 14:1–14:2
+    const MOON_DAILY_EPICYCLE_DEG = 13 + 3 / 60 + 53.93 / 3600;   // 14:3–14:4
+
     function mod360(deg) {
       return H.mod360(deg);
     }
@@ -62,12 +68,17 @@
           : sunAveragePlace + correction
       );
 
+      const moonMainPlace = mod360(MOON_MAIN_AT_EPOCH_DEG + days * MOON_DAILY_MAIN_DEG);
+      const moonEpicyclePlace = mod360(MOON_EPICYCLE_AT_EPOCH_DEG + days * MOON_DAILY_EPICYCLE_DEG);
+
       return {
         sunAveragePlace,
         aphelionPlace,
         distanceFromAphelion,
         realPlace,
         correction,
+        moonMainPlace,
+        moonEpicyclePlace,
       };
     }
 
@@ -159,6 +170,8 @@
           "<tr><td>Aphelion place</td><td>" + formatDms(result.aphelionPlace) + "</td></tr>" +
           "<tr><td>Distance of average from aphelion</td><td>" + formatDms(result.distanceFromAphelion) + "</td></tr>" +
           "<tr><td>Real place of sun</td><td>" + formatDms(result.realPlace) + "</td></tr>" +
+          "<tr><td>Moon mean (big cycle)</td><td>" + formatDms(result.moonMainPlace) + "</td></tr>" +
+          "<tr><td>Moon epicycle (orbit)</td><td>" + formatDms(result.moonEpicyclePlace) + "</td></tr>" +
           "</table>";
       }
 

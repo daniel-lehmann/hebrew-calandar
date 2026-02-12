@@ -151,8 +151,20 @@
               <p id="rambam-verse-text" class="rambam-verse-hebrew quote-text" dir="rtl" lang="he"></p>
               <p id="rambam-verse-explanation" class="rambam-verse-explanation"></p>
             </div>
-            <div class="rambam-table-wrapper">
+            <div id="rambam-sun-table-wrapper" class="rambam-table-wrapper">
               <table id="rambam-mean-sun-table" class="rambam-table"></table>
+            </div>
+            <div id="rambam-moon-mean-block" class="rambam-moon-mean-block" style="display:none;">
+              <div id="rambam-moon-mean-cycle"></div>
+              <div class="rambam-table-wrapper">
+                <table id="rambam-moon-mean-table" class="rambam-table"></table>
+              </div>
+            </div>
+            <div id="rambam-moon-mean-path-block" class="rambam-moon-mean-block" style="display:none;">
+              <div id="rambam-moon-mean-path-cycle"></div>
+              <div class="rambam-table-wrapper">
+                <table id="rambam-moon-mean-path-table" class="rambam-table"></table>
+              </div>
             </div>
             <div class="rambam-visualization">
               <div class="stats-controls rambam-vis-controls">
@@ -273,6 +285,8 @@
     <script src="js/rambam-mean-sun.js"></script>
     <script src="js/rambam-helpers.js"></script>
     <script src="js/rambam-sun-calc.js"></script>
+    <script src="js/rambam-moon-mean.js"></script>
+    <script src="js/rambam-moon-mean-path.js"></script>
     <script src="js/view.js"></script>
     <script src="js/search.js"></script>
     <script src="data/parashot-data.js"></script>
