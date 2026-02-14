@@ -222,12 +222,14 @@
 
       var targetYear = yearOverride || hy;
       try {
-        // Check month exists in target year
+        var month = core.getHolidayMonthForYear
+          ? core.getHolidayMonthForYear(h, targetYear)
+          : h.month;
         var months = core.yearMonths(targetYear);
-        var monthExists = months.some(function (m) { return m.name === h.month; });
+        var monthExists = months.some(function (m) { return m.name === month; });
         if (!monthExists) return;
 
-        var g = core.gregorianFromHebrew(targetYear, h.month, h.startDay);
+        var g = core.gregorianFromHebrew(targetYear, month, h.startDay);
         var gregStr = GREG_MONTHS[g.monthIndex] + " " + g.day + ", " + g.year;
         var dayName = DAY_NAMES[g.weekday];
         results.push({

@@ -563,7 +563,8 @@
           monthName,
           day,
           years,
-          label
+          label,
+          kind === "holiday" ? holiday : undefined
         );
       }
     }
@@ -619,7 +620,12 @@
         label = day + " " + monthName;
       }
       if (statsOutput) statsOutput.textContent = "";
-      var hist = global.Stats.weekdayHistogramData(monthName, day, label);
+      var hist = global.Stats.weekdayHistogramData(
+        monthName,
+        day,
+        label,
+        kind === "holiday" ? holiday : undefined
+      );
       if (!hist) return;
       if (tishreiChartWrapper) tishreiChartWrapper.style.display = "block";
       var ctx = tishreiHistCanvas.getContext("2d");

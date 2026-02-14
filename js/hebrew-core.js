@@ -31,7 +31,9 @@
     // Chanukah spans Kislev 25 – Tevet 2; we mark the first day on Kislev 25 here.
     { name: "Chanukah", month: "Kislev", startDay: 25, endDay: 25 },
     { name: "Tu Bishvat", month: "Shevat", startDay: 15, endDay: 15 },
-    { name: "Purim", month: "Adar", startDay: 14, endDay: 14 },
+    // Purim: Adar 14 (non-leap) or Adar2 14 (leap years). 30 days before 15 Nisan.
+    { name: "Purim", month: "Adar", leapMonth: "Adar2", startDay: 14, endDay: 14 },
+    { name: "Shushan Purim", month: "Adar", leapMonth: "Adar2", startDay: 15, endDay: 15 },
     { name: "Pesach Sheni", month: "Iyar", startDay: 14, endDay: 14 },
     { name: "Lag BaOmer", month: "Iyar", startDay: 18, endDay: 18 },
     { name: "Tisha B’Av", month: "Av", startDay: 9, endDay: 9 },
@@ -41,6 +43,14 @@
   function isLeapYearHebrew(year) {
     const cycleYear = ((year - 1) % 19) + 1;
     return [3, 6, 8, 11, 14, 17, 19].includes(cycleYear);
+  }
+
+  /** For holidays with leapMonth (e.g. Purim), return the correct month for the given Hebrew year. */
+  function getHolidayMonthForYear(holiday, hebrewYear) {
+    if (holiday.leapMonth && isLeapYearHebrew(hebrewYear)) {
+      return holiday.leapMonth;
+    }
+    return holiday.month;
   }
 
   // --------------- Molad calculation using exact integer chalakim ---------------
@@ -258,7 +268,7 @@
       { name: "Kislev", length: kislev },
       { name: "Tevet", length: 29 },
       { name: "Shevat", length: 30 },
-      { name: "Adar", length: 29 },
+      { name: "Adar", length: leap ? 30 : 29 }, // Adar I (30) in leap, Adar (29) in non-leap
       { name: "Nisan", length: 30 },
       { name: "Iyar", length: 29 },
       { name: "Sivan", length: 30 },
@@ -268,8 +278,8 @@
     ];
 
     if (leap) {
-      // Insert Adar2 (30 days) after Adar.
-      months.splice(6, 0, { name: "Adar2", length: 30 });
+      // Insert Adar II (29 days) after Adar I. Purim is 14 Adar II, 30 days before 15 Nisan.
+      months.splice(6, 0, { name: "Adar2", length: 29 });
     }
 
     return months;
@@ -341,6 +351,7 @@
     HEBREW_MONTHS,
     HEBREW_HOLIDAYS,
     isLeapYearHebrew,
+    getHolidayMonthForYear,
     moladTishreyMs,
     getMoladTishrei,
     tishrei1Date,

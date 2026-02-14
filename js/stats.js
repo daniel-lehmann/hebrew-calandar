@@ -17,9 +17,11 @@
 
     const earliestByHoliday = new Map();
 
+    const getMonth = core.getHolidayMonthForYear || ((h) => h.month);
     for (let hy = startYear; hy <= endYear; hy++) {
       for (const h of holidays) {
-        const g = core.gregorianFromHebrew(hy, h.month, h.startDay);
+        const month = getMonth(h, hy);
+        const g = core.gregorianFromHebrew(hy, month, h.startDay);
         const key = h.name;
 
         const current = earliestByHoliday.get(key);
@@ -33,7 +35,7 @@
         ) {
           earliestByHoliday.set(key, {
             hebrewYear: hy,
-            hebrewMonthName: h.month,
+            hebrewMonthName: month,
             hebrewDay: h.startDay,
             g,
           });
@@ -143,13 +145,17 @@
    * @param {string} [monthName] - Hebrew month name (default "Tishrey")
    * @param {number} [day]       - Day of month (default 1)
    * @param {string} [label]     - Display label for the chart
+   * @param {object} [holiday]   - Optional holiday object (for leap-dependent months like Purim)
    */
-  function weekdayHistogramData(monthName, day, label) {
+  function weekdayHistogramData(monthName, day, label, holiday) {
     const core = HebrewCore();
     if (!core) return null;
 
     monthName = monthName || "Tishrey";
     day = Number(day) || 1;
+    const getMonth = holiday && core.getHolidayMonthForYear
+      ? (hy) => core.getHolidayMonthForYear(holiday, hy)
+      : () => monthName;
 
     const endYear = 5786;
     const startYear = endYear - 1999;
@@ -157,7 +163,7 @@
 
     for (let hy = startYear; hy <= endYear; hy++) {
       try {
-        const g = core.gregorianFromHebrew(hy, monthName, day);
+        const g = core.gregorianFromHebrew(hy, getMonth(hy), day);
         counts[g.weekday] += 1;
       } catch (e) {
         // Date may not exist in this year (e.g. Adar2 in non-leap years)
@@ -177,7 +183,7 @@
     return weekdayHistogramData("Tishrey", 1, "1 Tishrey");
   }
 
-  function listHebrewDateYears(monthName, day, countYears, label) {
+  function listHebrewDateYears(monthName, day, countYears, label, holiday) {
     const core = HebrewCore();
     if (!core) return "HebrewCore not loaded.";
 
@@ -186,6 +192,9 @@
     years = Math.max(1, Math.min(2000, years));
     const startYear = Math.max(1, endYear - (years - 1));
     const weekdayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const getMonth = holiday && core.getHolidayMonthForYear
+      ? (hy) => core.getHolidayMonthForYear(holiday, hy)
+      : () => monthName;
 
     const effectiveLabel = label || `${day} ${monthName}`;
     const lines = [];
@@ -196,7 +205,7 @@
     for (let hy = startYear; hy <= endYear; hy++) {
       let g;
       try {
-        g = core.gregorianFromHebrew(hy, monthName, day);
+        g = core.gregorianFromHebrew(hy, getMonth(hy), day);
       } catch (e) {
         // This Hebrew date may not exist in this year (e.g. Adar2 in non-leap years).
         continue;
@@ -226,9 +235,11 @@
 
     const latestByHoliday = new Map();
 
+    const getMonth = core.getHolidayMonthForYear || ((h) => h.month);
     for (let hy = startYear; hy <= endYear; hy++) {
       for (const h of holidays) {
-        const g = core.gregorianFromHebrew(hy, h.month, h.endDay);
+        const month = getMonth(h, hy);
+        const g = core.gregorianFromHebrew(hy, month, h.endDay);
         const key = h.name;
 
         const current = latestByHoliday.get(key);
@@ -242,7 +253,7 @@
         ) {
           latestByHoliday.set(key, {
             hebrewYear: hy,
-            hebrewMonthName: h.month,
+            hebrewMonthName: month,
             hebrewDay: h.endDay,
             g,
           });
@@ -341,9 +352,10 @@
     let minDoy = Infinity;
     let maxDoy = -Infinity;
 
+    const getMonth = core.getHolidayMonthForYear || ((h) => h.month);
     for (let col = 0; col < width; col++) {
       const hy = Math.round(startYear + (col + 0.5) * yearsPerCol);
-      const g = core.gregorianFromHebrew(hy, holiday.month, holiday.startDay);
+      const g = core.gregorianFromHebrew(hy, getMonth(holiday, hy), holiday.startDay);
       const doy =
         core.absoluteFromGregorian(g.year, g.monthIndex, g.day) -
         core.absoluteFromGregorian(g.year, 0, 1);
@@ -419,8 +431,9 @@
     const weekdays = [];    // "Mon", "Tue", …
     const weekdayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
+    const getMonth = core.getHolidayMonthForYear || ((h) => h.month);
     for (let hy = startYear; hy <= endYear; hy++) {
-      const g = core.gregorianFromHebrew(hy, holiday.month, holiday.startDay);
+      const g = core.gregorianFromHebrew(hy, getMonth(holiday, hy), holiday.startDay);
       years.push(hy);
       dayOfYear.push(simplifiedDayOfYear(g.monthIndex, g.day)); // 1–365, Feb = 28 days
       gregDates.push(g.date.toISOString().slice(0, 10));

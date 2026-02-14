@@ -132,13 +132,19 @@
         nextBtn.setAttribute("role", "button");
 
         if (onHolidayNav) {
+          const core = global.HebrewCore;
+          const getMonth = core && core.getHolidayMonthForYear
+            ? (hol, y) => core.getHolidayMonthForYear(hol, y)
+            : (hol) => hol.month;
           prevBtn.addEventListener("click", function (e) {
             e.stopPropagation();
-            onHolidayNav(hebrewYear, holiday.month, holiday.startDay, -1);
+            const targetYear = hebrewYear - 1;
+            onHolidayNav(hebrewYear, getMonth(holiday, targetYear), holiday.startDay, -1);
           });
           nextBtn.addEventListener("click", function (e) {
             e.stopPropagation();
-            onHolidayNav(hebrewYear, holiday.month, holiday.startDay, 1);
+            const targetYear = hebrewYear + 1;
+            onHolidayNav(hebrewYear, getMonth(holiday, targetYear), holiday.startDay, 1);
           });
         }
 
@@ -361,13 +367,17 @@
 
         if (onHolidayNav) {
           (function (hy, hol) {
+            const core = global.HebrewCore;
+            const getMonth = core && core.getHolidayMonthForYear
+              ? (h, y) => core.getHolidayMonthForYear(h, y)
+              : (h) => h.month;
             prevBtn.addEventListener("click", function (e) {
               e.stopPropagation();
-              onHolidayNav(hy, hol.month, hol.startDay, -1);
+              onHolidayNav(hy, getMonth(hol, hy - 1), hol.startDay, -1);
             });
             nextBtn.addEventListener("click", function (e) {
               e.stopPropagation();
-              onHolidayNav(hy, hol.month, hol.startDay, 1);
+              onHolidayNav(hy, getMonth(hol, hy + 1), hol.startDay, 1);
             });
           })(hebrewYear, holiday);
         }
@@ -437,12 +447,19 @@
     });
   }
 
+  function monthMatchesHoliday(holiday, monthName) {
+    return (
+      holiday.month === monthName ||
+      (holiday.leapMonth && holiday.leapMonth === monthName)
+    );
+  }
+
   function findHolidayForHebrewDate(monthName, day) {
     const holidays =
       (global.HebrewCore && global.HebrewCore.HEBREW_HOLIDAYS) || [];
     for (const holiday of holidays) {
       if (
-        holiday.month === monthName &&
+        monthMatchesHoliday(holiday, monthName) &&
         day >= holiday.startDay &&
         day <= holiday.endDay
       ) {
@@ -457,7 +474,7 @@
       (global.HebrewCore && global.HebrewCore.HEBREW_HOLIDAYS) || [];
     for (const holiday of holidays) {
       if (
-        holiday.month === monthName &&
+        monthMatchesHoliday(holiday, monthName) &&
         day >= holiday.startDay &&
         day <= holiday.endDay
       ) {

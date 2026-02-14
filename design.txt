@@ -44,7 +44,7 @@ Shemini Atzeret: [Tishrei 22, Tishrei 22]
 Simchat Torah: [Tishrei 23, Tishrei 23]
 Chanukah: [Kislev 25, Tevet 2]
 Tu Bishvat: [Shevat 15, Shevat 15]
-Purim: [Adar 14, Adar 14]
+Purim: [Adar 14, Adar 15] (Adar2 14–15 in leap years)
 Pesach Sheni: [Iyar 14, Iyar 14]
 Lag BaOmer: [Iyar 18, Iyar 18]
 Tisha B’Av: [Av 9, Av 9]
@@ -63,7 +63,7 @@ Sivan: 30,
 Tammuz: 29,
 Av: 30,
 Elul: 29]
-Adar2: 30 is added after Adar on leap years.
+Adar I (Adar in leap): 30 days. Adar II (Adar2 in leap): 29 days. Non-leap Adar: 29.
 
 Leap years:
 on years 3,6,8,11,14,17,19 of the cycle we add Adar2
