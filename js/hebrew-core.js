@@ -26,10 +26,10 @@
     { name: "Rosh Hashanah", month: "Tishrey", startDay: 1, endDay: 2 },
     { name: "Yom Kippur", month: "Tishrey", startDay: 10, endDay: 10 },
     { name: "Sukkot", month: "Tishrey", startDay: 15, endDay: 21 },
-    { name: "Shemini Atzeret", month: "Tishrey", startDay: 22, endDay: 22 },
-    { name: "Simchat Torah", month: "Tishrey", startDay: 23, endDay: 23 },
-    // Chanukah spans Kislev 25 – Tevet 2; we mark the first day on Kislev 25 here.
-    { name: "Chanukah", month: "Kislev", startDay: 25, endDay: 25 },
+    { name: "Shemini Atzeret/Simchat Torah", month: "Tishrey", startDay: 22, endDay: 22 },
+    // { name: "Simchat Torah", month: "Tishrey", startDay: 23, endDay: 23 },
+    // Chanukah spans Kislev 25 for 8 days (ends Tevet 2 or 3 depending on length of Kislev).
+    { name: "Chanukah", month: "Kislev", startDay: 25, length: 8 },
     { name: "Tu Bishvat", month: "Shevat", startDay: 15, endDay: 15 },
     // Purim: Adar 14 (non-leap) or Adar2 14 (leap years). 30 days before 15 Nisan.
     { name: "Purim", month: "Adar", leapMonth: "Adar2", startDay: 14, endDay: 14 },
@@ -51,6 +51,39 @@
       return holiday.leapMonth;
     }
     return holiday.month;
+  }
+
+  /**
+   * Return an array of { monthName, day } for every day of the holiday in the given Hebrew year.
+   * Handles multi-day holidays that span months (e.g. Chanukah: Kislev 25 for 8 days → into Tevet).
+   */
+  function getHolidayDaysInYear(hebrewYear, holiday) {
+    const month = getHolidayMonthForYear(holiday, hebrewYear);
+    if (holiday.length != null && holiday.length > 0) {
+      const startAbs = absoluteFromHebrew(hebrewYear, month, holiday.startDay);
+      const result = [];
+      for (let i = 0; i < holiday.length; i++) {
+        const abs = startAbs + i;
+        const d = new Date(abs * DAY_MS);
+        const h = gregorianToHebrew(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+        result.push({ monthName: h.hebrewMonthName, day: h.hebrewDay });
+      }
+      return result;
+    }
+    const result = [];
+    const endDay = holiday.endDay != null ? holiday.endDay : holiday.startDay;
+    for (let day = holiday.startDay; day <= endDay; day++) {
+      result.push({ monthName: month, day: day });
+    }
+    return result;
+  }
+
+  /** Return true if (monthName, day) in the given Hebrew year falls on this holiday. */
+  function isDayInHoliday(hebrewYear, monthName, day, holiday) {
+    const days = getHolidayDaysInYear(hebrewYear, holiday);
+    return days.some(function (d) {
+      return d.monthName === monthName && d.day === day;
+    });
   }
 
   // --------------- Molad calculation using exact integer chalakim ---------------
@@ -352,6 +385,8 @@
     HEBREW_HOLIDAYS,
     isLeapYearHebrew,
     getHolidayMonthForYear,
+    getHolidayDaysInYear,
+    isDayInHoliday,
     moladTishreyMs,
     getMoladTishrei,
     tishrei1Date,

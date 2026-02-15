@@ -1,0 +1,66 @@
+Verse 15:6
+
+(ו) וכמה היא מנת המסלול, אם יהיה המסלול הנכון עשר מעלות, תהיה מנתו חמישים חלקים:
+ואם יהיה המסלול הנכון עשרים מעלות, תהיה מנתו מעלה אחת ושמונה ושלשים חלקים:
+ואם יהיה שלשים, תהיה מנתו שתי מעלות וארבעה ועשרים חלקים:
+ואם יהיה ארבעים, תהיה מנתו שלש מעלות ושישה חלקים:
+ואם יהיה חמישים, תהיה מנתו שלש מעלות וארבעה וארבעים חלקים:
+ואם יהיה שישים, תהיה מנתו ארבע מעלות ושישה עשר חלקים:
+ואם יהיה שבעים, תהיה מנתו ארבע מעלות ואחד וארבעים חלקים:
+ואם יהיה שמונים, תהיה מנתו חמש מעלות:
+ואם יהיה תשעים, תהיה מנתו חמש מעלות וחמישה חלקים:
+ואם יהיה מאה, תהיה מנתו חמש מעלות ושמונה חלקים:
+ואם יהיה מאה ועשר, תהיה מנתו ארבע מעלות ותשעה וחמישים חלקים:
+ואם יהיה מאה ועשרים, תהיה מנתו ארבע מעלות וארבעים חלקים:
+ואם יהיה מאה ושלשים, תהיה מנתו ארבע מעלות ואחד עשר חלקים:
+ואם יהיה מאה וארבעים, תהיה מנתו שלש מעלות ושלשה ושלשים חלקים:
+ואם יהיה מאה וחמישים, תהיה מנתו שתי מעלות ושמונה וארבעים חלקים:
+ואם יהיה מאה ושישים, תהיה מנתו מעלה אחת ושישה וחמישים חלקים:
+ואם יהיה מאה ושבעים, תהיה מנתו תשעה וחמישים חלקים:
+ואם יהיה מאה ושמונים בשוה, אין לו מנה, כמו שאמרנו, אלא מקום הירח האמצעי הוא המקום האמיתי:
+
+
+Here the rambam gives how much you need to fix the moon position due to the iregularity.
+Our understanding is that this is due to the ellipse orbit and keplers law.
+The rambam understanding is that this is due to the moon moving on an epicycle.
+
+Create a table that shows the following columns:
+1. The average motion. 0, 10, 20, 30... 180
+2. The fix the rambam gives
+3. The fix calculated using:
+
+def get_anomaly(deg):
+    rad = math.radians(deg)
+    e = 0.0905
+    rad = math.atan2(e * math.sin(rad), 1 + e * math.cos(rad))
+    return math.degrees(rad)
+
+
+Add this as another verse that is explained.
+Add it to the verses drop down.
+Add the Text nicely formated above and below that an explanation.
+Below that the table described above.
+
+Also add a row wherer you can choose the value in the first column and the other 2 values are calculated.
+The rambam number is calculated using linear interpolation of the values in the table.
+(values above 180 calculate using 360 - angle)
+The third value is calculated with the formula above
+
+Below that show an SVG with the moon model.
+First draw one big circle and a point that is rotating on that circle in 13 deg 10 arcmin 35 arcseconds a day.
+Then draw a second circle round the first point on the first circle and draw a point on the second circle that is rotating on that circle in 13 deg 3 arcmin 54 arcseconds a day.
+The second circle radius should be 0.0905 of the radius of the big circle.
+
+Then draw a line from the center of the big circle to the 2 rotating points and mark the angle between these 2 lines with a line arc like used in geometry books to mark angles.
+
+Make the angle of the small circle jump with 10deg each tick and make it go round in 1 minute.
+The second circle should rotate at the appropriate amount by the proportion of the 2 motions.
+Above the SVG you write the angle of motion 10, 20, 30 ...
+And the angle of the anomaly using the calculation in the function above
+
+The verses drop down is:
+id="rambam-verse-select"
+in index.html.
+
+Do all this in seperate files and load them in dynamically as needed.
+Create a function for dynamically loading content into a container. Do not add logic to the exising files. only the loading function is in the exisisting files. Styles should also be in a new file.

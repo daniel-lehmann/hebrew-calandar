@@ -1,7 +1,12 @@
 // rambam-mean-sun.js
 // Explanatory stat for Rambam's description of the mean motion of the sun (Hilchot Kiddush HaChodesh 12:1).
+// Depends on: RambamHelpers (degToDms, formatDms)
 
 (function (global) {
+  const H = global.RambamHelpers;
+  const degToDms = H ? H.degToDms : function (d) { return { d: Math.floor(d), m: 0, s: 0 }; };
+  const formatDms = H ? H.formatDms : function (d) { return String(d) + "°"; };
+
   const RambamMeanSun = (function () {
     let initialized = false;
     // Default eccentricity: use the value from the Rambam anomaly prompt (0.03462).
@@ -421,45 +426,6 @@
       requestAnimationFrame(animate);
     }
 
-    function degToDms(deg) {
-      const sign = deg < 0 ? -1 : 1;
-      let x = Math.abs(deg);
-      let d = Math.floor(x);
-      let mFloat = (x - d) * 60;
-      let m = Math.floor(mFloat);
-      let s = (mFloat - m) * 60;
-      // Round seconds to 2 decimal places and normalise carry to minutes/degrees.
-      s = Number(s.toFixed(2));
-      if (s >= 60) {
-        s -= 60;
-        m += 1;
-      }
-      if (m >= 60) {
-        m -= 60;
-        d += 1;
-      }
-      if (sign < 0) d = -d;
-      return { d, m, s };
-    }
-
-    function formatDms(deg, omitSeconds) {
-      const { d, m, s } = degToDms(deg);
-      const signStr = d < 0 ? "-" : "";
-      const absD = Math.abs(d);
-      if (omitSeconds) {
-        return signStr + absD + "° " + String(m) + "′";
-      }
-      return (
-        signStr +
-        absD +
-        "° " +
-        String(m) +
-        "′ " +
-        s.toFixed(2) +
-        "″"
-      );
-    }
-
     function updateDaysComputation() {
       const input = document.getElementById("rambam-days-input");
       const outEl = document.getElementById("rambam-days-output");
@@ -537,13 +503,6 @@
       const verse = VERSES.find((v) => v.id === id) || VERSES[0];
       const hebEl = document.getElementById("rambam-verse-text");
       const enEl = document.getElementById("rambam-verse-explanation");
-      if (hebEl) {
-        hebEl.textContent = verse.hebrewText;
-      }
-      if (enEl) {
-        enEl.textContent = verse.englishSummary;
-      }
-
       const sunTableWrapper = document.getElementById("rambam-sun-table-wrapper");
       const moonBlock = document.getElementById("rambam-moon-mean-block");
       const moonPathBlock = document.getElementById("rambam-moon-mean-path-block");
@@ -551,6 +510,32 @@
       const daysOutput = document.getElementById("rambam-days-output");
       const visBlock = document.querySelector(".rambam-visualization");
       const eccControls = document.querySelector(".rambam-ecc-controls");
+      const verseBlock = document.querySelector(".rambam-verse-block");
+      const lazyContainer = document.getElementById("rambam-lazy-verse-container");
+
+      if (verse._lazy && global.RambamLoadVerse) {
+        const reg = global.RambamLoadVerse.REGISTRY[id];
+        if (reg && lazyContainer) {
+          if (verseBlock) verseBlock.style.display = "none";
+          if (sunTableWrapper) sunTableWrapper.style.display = "none";
+          if (moonBlock) moonBlock.style.display = "none";
+          if (moonPathBlock) moonPathBlock.style.display = "none";
+          if (daysControls) daysControls.style.display = "none";
+          if (daysOutput) daysOutput.style.display = "none";
+          if (visBlock) visBlock.style.display = "none";
+          if (eccControls) eccControls.style.display = "none";
+          lazyContainer.style.display = "";
+          global.RambamLoadVerse.loadVerseContent(id, reg.containerId).catch(function (e) {
+            console.error("Failed to load verse " + id + ":", e);
+          });
+          return;
+        }
+      }
+
+      if (verseBlock) verseBlock.style.display = "";
+      if (hebEl) hebEl.textContent = verse.hebrewText || "";
+      if (enEl) enEl.textContent = verse.englishSummary || "";
+      if (lazyContainer) lazyContainer.style.display = "none";
 
       if (id === "14:1") {
         if (sunTableWrapper) sunTableWrapper.style.display = "none";
@@ -832,6 +817,14 @@
           hebrewText: d.hebrewText,
           englishSummary: d.englishSummary,
         });
+      }
+      if (global.RambamLoadVerse && global.RambamLoadVerse.REGISTRY) {
+        const reg = global.RambamLoadVerse.REGISTRY;
+        for (const id in reg) {
+          if (reg.hasOwnProperty(id)) {
+            VERSES.push({ id: id, label: reg[id].label, _lazy: true });
+          }
+        }
       }
 
       const verseSelect = document.getElementById("rambam-verse-select");

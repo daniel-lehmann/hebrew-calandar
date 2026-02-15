@@ -1,0 +1,118 @@
+/* rambam-15-6.css – Moon anomaly correction (verse 15:6) */
+
+.rambam-15-6-verse-block {
+  margin-bottom: 1rem;
+}
+
+.rambam-15-6-hebrew {
+  font-size: 1.05em;
+  line-height: 1.6;
+  margin-bottom: 0.75rem;
+}
+
+.rambam-15-6-explanation {
+  margin-top: 0.5rem;
+  color: var(--text-muted, #555);
+  font-size: 0.95em;
+}
+
+.rambam-15-6-table-wrapper {
+  margin: 1rem 0;
+  overflow-x: auto;
+}
+
+.rambam-15-6-table {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 36rem;
+}
+
+.rambam-15-6-table th,
+.rambam-15-6-table td {
+  border: 1px solid var(--border-color, #555);
+  padding: 0.35rem 0.75rem;
+  text-align: left;
+}
+
+.rambam-15-6-table th {
+  background: var(--table-header-bg, rgba(255, 255, 255, 0.08));
+  font-weight: 600;
+}
+
+.rambam-15-6-dynamic-row td {
+  background: var(--table-dynamic-bg, rgba(255, 255, 255, 0.04));
+}
+
+.rambam-15-6-angle-input {
+  width: 5em;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.95em;
+}
+
+.rambam-15-6-svg-wrap {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: var(--rambam-svg-bg, rgba(0, 0, 0, 0.2));
+  border-radius: 0.5rem;
+}
+
+.rambam-15-6-svg-labels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.9em;
+}
+
+.rambam-15-6-svg-angle,
+.rambam-15-6-svg-anomaly {
+  font-family: monospace;
+}
+
+.rambam-15-6-svg {
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  margin: 0 auto;
+}
+
+.rambam-15-6-orbit {
+  fill: none;
+  stroke: var(--rambam-orbit-stroke, #64748b);
+  stroke-width: 1.5;
+}
+
+.rambam-15-6-epicycle {
+  fill: none;
+  stroke: var(--rambam-epicycle-stroke, #94a3b8);
+  stroke-width: 1;
+}
+
+.rambam-15-6-centre {
+  fill: var(--rambam-centre-fill, #e2e8f0);
+}
+
+.rambam-15-6-mean-line {
+  stroke: var(--rambam-mean-line, #f59e0b);
+  stroke-width: 2;
+}
+
+.rambam-15-6-epicycle-line {
+  stroke: var(--rambam-epicycle-line, #06b6d4);
+  stroke-width: 2;
+}
+
+.rambam-15-6-mean-dot {
+  fill: var(--rambam-mean-dot, #f59e0b);
+}
+
+.rambam-15-6-moon-dot {
+  fill: var(--rambam-moon-dot, #06b6d4);
+}
+
+.rambam-15-6-angle-arc {
+  fill: none;
+  stroke: var(--rambam-arc-stroke, #a78bfa);
+  stroke-width: 1.5;
+}

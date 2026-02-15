@@ -109,7 +109,7 @@
       hebRow.appendChild(hebSpan);
       cell.appendChild(hebRow);
 
-      const holiday = findHolidayObjForHebrewDate(hebrewMonthName, hebrewDay);
+      const holiday = findHolidayObjForHebrewDate(hebrewYear, hebrewMonthName, hebrewDay);
       if (holiday) {
         const holidayEl = document.createElement("div");
         holidayEl.className = "holiday";
@@ -232,7 +232,7 @@
       const dateRow = document.createElement("div");
       dateRow.className = "date-row";
 
-      const { hebrewDay, hebrewMonthName } = hebrewDayInfoFn(
+      const { hebrewDay, hebrewMonthName, hebrewYear } = hebrewDayInfoFn(
         gregorianYear,
         monthIndex,
         day
@@ -250,7 +250,7 @@
       dateRow.appendChild(dateSub);
       cell.appendChild(dateRow);
 
-      const holidayName = findHolidayForHebrewDate(hebrewMonthName, hebrewDay);
+      const holidayName = findHolidayForHebrewDate(hebrewYear, hebrewMonthName, hebrewDay);
       if (holidayName) {
         const holidayEl = document.createElement("div");
         holidayEl.className = "holiday";
@@ -343,7 +343,7 @@
       cell.appendChild(gregRow);
 
       // Holiday with nav arrows
-      var holiday = findHolidayObjForHebrewDate(hebrewMonthName, day);
+      var holiday = findHolidayObjForHebrewDate(hebrewYear, hebrewMonthName, day);
       if (holiday) {
         var holidayEl = document.createElement("div");
         holidayEl.className = "holiday";
@@ -454,14 +454,23 @@
     );
   }
 
-  function findHolidayForHebrewDate(monthName, day) {
-    const holidays =
-      (global.HebrewCore && global.HebrewCore.HEBREW_HOLIDAYS) || [];
+  function findHolidayForHebrewDate(hebrewYear, monthName, day) {
+    const core = global.HebrewCore;
+    const holidays = (core && core.HEBREW_HOLIDAYS) || [];
+    if (core && core.isDayInHoliday && hebrewYear != null) {
+      for (const holiday of holidays) {
+        if (core.isDayInHoliday(hebrewYear, monthName, day, holiday)) {
+          return holiday.name;
+        }
+      }
+      return "";
+    }
     for (const holiday of holidays) {
+      const endDay = holiday.endDay != null ? holiday.endDay : holiday.startDay;
       if (
         monthMatchesHoliday(holiday, monthName) &&
         day >= holiday.startDay &&
-        day <= holiday.endDay
+        day <= endDay
       ) {
         return holiday.name;
       }
@@ -469,14 +478,23 @@
     return "";
   }
 
-  function findHolidayObjForHebrewDate(monthName, day) {
-    const holidays =
-      (global.HebrewCore && global.HebrewCore.HEBREW_HOLIDAYS) || [];
+  function findHolidayObjForHebrewDate(hebrewYear, monthName, day) {
+    const core = global.HebrewCore;
+    const holidays = (core && core.HEBREW_HOLIDAYS) || [];
+    if (core && core.isDayInHoliday && hebrewYear != null) {
+      for (const holiday of holidays) {
+        if (core.isDayInHoliday(hebrewYear, monthName, day, holiday)) {
+          return holiday;
+        }
+      }
+      return null;
+    }
     for (const holiday of holidays) {
+      const endDay = holiday.endDay != null ? holiday.endDay : holiday.startDay;
       if (
         monthMatchesHoliday(holiday, monthName) &&
         day >= holiday.startDay &&
-        day <= holiday.endDay
+        day <= endDay
       ) {
         return holiday;
       }

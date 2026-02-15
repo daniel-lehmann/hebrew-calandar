@@ -36,8 +36,8 @@ html,css, js all seperate and load it in as needed.
 In the ramabam sun calc (btn-rambam-sun-calc)
 Add a row for the mean main motion of the moon on the big cycle.
 And a row for the epicycle motion of the moon.
-The place at epoch of main motion is 84 28 42
-The place for second motion is 31 14 43.
+The place at epoch of main motion is 31 14 43.
+The place for second motion is 84 28 42 
 
 Take the daily motions from the verses 14:1 - 14:4
 in the drop down of verses 

@@ -18,10 +18,17 @@
     const earliestByHoliday = new Map();
 
     const getMonth = core.getHolidayMonthForYear || ((h) => h.month);
+    const getFirstDay = (h, hy) => {
+      if (h.length != null && core.getHolidayDaysInYear) {
+        const days = core.getHolidayDaysInYear(hy, h);
+        return days.length ? days[0] : { monthName: getMonth(h, hy), day: h.startDay };
+      }
+      return { monthName: getMonth(h, hy), day: h.startDay };
+    };
     for (let hy = startYear; hy <= endYear; hy++) {
       for (const h of holidays) {
-        const month = getMonth(h, hy);
-        const g = core.gregorianFromHebrew(hy, month, h.startDay);
+        const first = getFirstDay(h, hy);
+        const g = core.gregorianFromHebrew(hy, first.monthName, first.day);
         const key = h.name;
 
         const current = earliestByHoliday.get(key);
@@ -35,8 +42,8 @@
         ) {
           earliestByHoliday.set(key, {
             hebrewYear: hy,
-            hebrewMonthName: month,
-            hebrewDay: h.startDay,
+            hebrewMonthName: first.monthName,
+            hebrewDay: first.day,
             g,
           });
         }
@@ -236,10 +243,17 @@
     const latestByHoliday = new Map();
 
     const getMonth = core.getHolidayMonthForYear || ((h) => h.month);
+    const getLastDay = (h, hy) => {
+      if (h.length != null && core.getHolidayDaysInYear) {
+        const days = core.getHolidayDaysInYear(hy, h);
+        return days.length ? days[days.length - 1] : { monthName: getMonth(h, hy), day: h.endDay != null ? h.endDay : h.startDay };
+      }
+      return { monthName: getMonth(h, hy), day: h.endDay != null ? h.endDay : h.startDay };
+    };
     for (let hy = startYear; hy <= endYear; hy++) {
       for (const h of holidays) {
-        const month = getMonth(h, hy);
-        const g = core.gregorianFromHebrew(hy, month, h.endDay);
+        const last = getLastDay(h, hy);
+        const g = core.gregorianFromHebrew(hy, last.monthName, last.day);
         const key = h.name;
 
         const current = latestByHoliday.get(key);
@@ -253,8 +267,8 @@
         ) {
           latestByHoliday.set(key, {
             hebrewYear: hy,
-            hebrewMonthName: month,
-            hebrewDay: h.endDay,
+            hebrewMonthName: last.monthName,
+            hebrewDay: last.day,
             g,
           });
         }
@@ -353,9 +367,17 @@
     let maxDoy = -Infinity;
 
     const getMonth = core.getHolidayMonthForYear || ((h) => h.month);
+    const getFirstDay = (h, hy) => {
+      if (h.length != null && core.getHolidayDaysInYear) {
+        const days = core.getHolidayDaysInYear(hy, h);
+        return days.length ? days[0] : { monthName: getMonth(h, hy), day: h.startDay };
+      }
+      return { monthName: getMonth(h, hy), day: h.startDay };
+    };
     for (let col = 0; col < width; col++) {
       const hy = Math.round(startYear + (col + 0.5) * yearsPerCol);
-      const g = core.gregorianFromHebrew(hy, getMonth(holiday, hy), holiday.startDay);
+      const first = getFirstDay(holiday, hy);
+      const g = core.gregorianFromHebrew(hy, first.monthName, first.day);
       const doy =
         core.absoluteFromGregorian(g.year, g.monthIndex, g.day) -
         core.absoluteFromGregorian(g.year, 0, 1);
@@ -432,8 +454,16 @@
     const weekdayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
     const getMonth = core.getHolidayMonthForYear || ((h) => h.month);
+    const getFirstDay = (h, hy) => {
+      if (h.length != null && core.getHolidayDaysInYear) {
+        const days = core.getHolidayDaysInYear(hy, h);
+        return days.length ? days[0] : { monthName: getMonth(h, hy), day: h.startDay };
+      }
+      return { monthName: getMonth(h, hy), day: h.startDay };
+    };
     for (let hy = startYear; hy <= endYear; hy++) {
-      const g = core.gregorianFromHebrew(hy, getMonth(holiday, hy), holiday.startDay);
+      const first = getFirstDay(holiday, hy);
+      const g = core.gregorianFromHebrew(hy, first.monthName, first.day);
       years.push(hy);
       dayOfYear.push(simplifiedDayOfYear(g.monthIndex, g.day)); // 1–365, Feb = 28 days
       gregDates.push(g.date.toISOString().slice(0, 10));

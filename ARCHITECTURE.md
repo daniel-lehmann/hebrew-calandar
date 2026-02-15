@@ -103,8 +103,8 @@ Renders calendars into the DOM. Exposes **`View`**. Depends on `HebrewCore` and 
 - `renderCombinedCalendar(container, gregorianYear, monthIndex, hebrewDayInfoFn, onHolidayNav)` — combined grid: Gregorian + Hebrew, holidays with nav arrows, parasha on Shabbat, molad Tishrei
 - `renderHebrewCalendar(...)` — Hebrew-primary grid (legacy path)
 - `renderHebrewMonthCalendar(container, hebrewYear, hebrewMonthName, onHolidayNav)` — Hebrew month as primary with Gregorian as sub; holidays, parasha, molad
-- `findHolidayForHebrewDate(monthName, day)` — holiday name or ""
-- `findHolidayObjForHebrewDate(monthName, day)` — holiday object or null
+- `findHolidayForHebrewDate(hebrewYear, monthName, day)` — holiday name or "" (needs year for multi-month holidays e.g. Chanukah)
+- `findHolidayObjForHebrewDate(hebrewYear, monthName, day)` — holiday object or null
 
 ---
 
