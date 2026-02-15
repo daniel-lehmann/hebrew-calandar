@@ -86,10 +86,10 @@
     return { hebrewText, englishSummary };
   }
 
-  /** Motion rates: big circle 13°10'35"/day, small circle 13°3'54"/day */
+  /** Motion rates: big circle (deferent) 13°10'35"/day, epicycle 13°3'54"/day */
   const BIG_DEG_PER_DAY = 13 + 10 / 60 + 35 / 3600;
   const SMALL_DEG_PER_DAY = 13 + 3 / 60 + 54 / 3600;
-  const RATIO = SMALL_DEG_PER_DAY / BIG_DEG_PER_DAY;
+  const DEFERENT_PER_TICK = 10 * (BIG_DEG_PER_DAY / SMALL_DEG_PER_DAY);
 
   function initSvg(container) {
     const svgWrap = container.querySelector(".rambam-15-6-svg-wrap");
@@ -139,12 +139,12 @@
     g.appendChild(epicycleLine);
 
     const meanDot = document.createElementNS(SVG_NS, "circle");
-    meanDot.setAttribute("r", 6);
+    meanDot.setAttribute("r", 3);
     meanDot.setAttribute("class", "rambam-15-6-mean-dot");
     g.appendChild(meanDot);
 
     const moonDot = document.createElementNS(SVG_NS, "circle");
-    moonDot.setAttribute("r", 6);
+    moonDot.setAttribute("r", 3);
     moonDot.setAttribute("class", "rambam-15-6-moon-dot");
     g.appendChild(moonDot);
 
@@ -163,24 +163,25 @@
       if (!startTime) startTime = timestamp;
       const elapsed = timestamp - startTime;
       const tick = Math.floor(elapsed / MS_PER_TICK);
-      const meanDeg = tick * 10;
-      const smallDeg = meanDeg * RATIO;
+      const epicycleDeg = tick * 10;
+      const deferentDeg = tick * DEFERENT_PER_TICK;
 
       if (tick !== lastTick) {
         lastTick = tick;
-        if (angleLabel) angleLabel.textContent = "Angle of motion: " + (meanDeg % 360) + "°";
-        const anomaly = getAnomalyMoon(meanDeg % 360);
+        if (angleLabel) angleLabel.textContent = "Angle of motion: " + (epicycleDeg % 360) + "°";
+        const anomaly = getAnomalyMoon(epicycleDeg % 360);
         if (anomalyLabel) anomalyLabel.textContent = "Anomaly (formula): " + formatDms(anomaly);
       }
 
-      const meanRad = (meanDeg * Math.PI) / 180;
-      const smallRad = (smallDeg * Math.PI) / 180;
+      const deferentRad = (deferentDeg * Math.PI) / 180;
+      const epicycleRad = (epicycleDeg * Math.PI) / 180;
 
-      const mx = R * Math.cos(meanRad);
-      const my = R * Math.sin(meanRad);
+      const mx = R * Math.cos(deferentRad);
+      const my = R * Math.sin(deferentRad);
 
-      const lx = mx + r * Math.cos(smallRad);
-      const ly = my + r * Math.sin(smallRad);
+      const moonAngleRad = deferentRad + epicycleRad;
+      const lx = mx + r * Math.cos(moonAngleRad);
+      const ly = my + r * Math.sin(moonAngleRad);
 
       smallCircle.setAttribute("cx", mx);
       smallCircle.setAttribute("cy", my);
@@ -203,13 +204,13 @@
 
       const moonAngle = Math.atan2(ly, lx);
       const arcR = R * 0.25;
-      const span = (moonAngle - meanRad + 2 * Math.PI) % (2 * Math.PI);
+      const span = (moonAngle - deferentRad + 2 * Math.PI) % (2 * Math.PI);
       const largeArc = span > Math.PI ? 1 : 0;
       const sweep = 1;
       const ax = arcR * Math.cos(moonAngle);
       const ay = arcR * Math.sin(moonAngle);
-      const sx = arcR * Math.cos(meanRad);
-      const sy = arcR * Math.sin(meanRad);
+      const sx = arcR * Math.cos(deferentRad);
+      const sy = arcR * Math.sin(deferentRad);
       angleArc.setAttribute(
         "d",
         "M " + sx + " " + sy + " A " + arcR + " " + arcR + " 0 " + largeArc + " " + sweep + " " + ax + " " + ay
